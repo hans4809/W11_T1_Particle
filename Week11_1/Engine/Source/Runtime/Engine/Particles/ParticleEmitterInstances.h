@@ -48,8 +48,6 @@ public:
 
     void Release();
 
-    FBaseParticle* GetParticle(int32 Index);
-
     void SpawnParticles(int32 Count, float StartTime, float Increment, const FVector& InitialLocation, const FVector& InitialVelocity);
 
     void KillParticle(int32 Index);
@@ -62,6 +60,8 @@ public:
     int32 GetSubImageV() const;
 
     void UpdatParticles(float DeltaTime);
+
+    FBaseParticle* GetParticle(int32 Index);
 
 };
 

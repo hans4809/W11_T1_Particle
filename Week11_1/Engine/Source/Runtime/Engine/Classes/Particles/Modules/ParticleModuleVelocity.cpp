@@ -2,6 +2,7 @@
 #include "Distributions//DistributionFloat.h"
 #include "Distributions/DistributionVector.h"
 #include "Particles/ParticleEmitterInstances.h"
+#include <Particles/ParticleMacros.h>
 UParticleModuleVelocity::UParticleModuleVelocity()
 {
     StartVelocity.Distribution = new UDistributionVectorConstant();
@@ -18,10 +19,13 @@ void UParticleModuleVelocity::Spawn(FParticleEmitterInstance* Owner, int32 Offse
         return;
     }
 
-    const FVector EmitterOrigin = Owner->GetEmitterOrigin();
+    SPAWN_INIT
 
+    const FVector EmitterOrigin = Owner->GetEmitterOrigin();
+    
     for (int32 i = 0; i < Owner->ActiveParticles; ++i) {
-        FBaseParticle* Particle = Owner->GetParticle(i);
+        uint8* Address = ParticleData + i * ParticleStride;
+        DECLARE_PARTICLE_PTR(Particle, Address);
         if (!Particle) {
             continue;
         }
