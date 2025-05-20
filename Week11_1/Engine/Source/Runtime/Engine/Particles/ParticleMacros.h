@@ -22,3 +22,9 @@
 
 #define END_UPDATE_LOOP \
     }
+
+#define SPAWN_INIT \
+    const int32 ActiveCount = Owner->ActiveParticles; \
+    const int32 ParticleStride = Owner->ParticleStride; \
+    uint8* ParticleData = Owner->ParticleData;
+

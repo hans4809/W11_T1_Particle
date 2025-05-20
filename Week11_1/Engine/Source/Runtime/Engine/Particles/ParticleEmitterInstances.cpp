@@ -144,7 +144,9 @@ void FParticleEmitterInstance::UpdatParticles(float DeltaTime)
 {
     for (int32 i = 0; i < ActiveParticles; ++i)
     {
-        FBaseParticle* Particle = GetParticle(i);
+        uint8* Address = ParticleData + ActiveParticles * ParticleStride;
+        DECLARE_PARTICLE_PTR(Particle, Address);
+        
         if (!Particle)
             continue;
 

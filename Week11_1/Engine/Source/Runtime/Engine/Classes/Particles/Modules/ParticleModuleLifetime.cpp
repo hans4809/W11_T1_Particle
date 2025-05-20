@@ -13,19 +13,14 @@ void UParticleModuleLifeTime::InitializeDefaults()
 
 void UParticleModuleLifeTime::Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, float Interp)
 {
-    const int32 ActiveCount = Owner->ActiveParticles;
-    const int32 ParticleStride = Owner->ParticleStride;
-    uint8* ParticleData = Owner->ParticleData;
-
-    FRandomStream Rand;
-    Rand.Initialize(12345);
+    SPAWN_INIT
 
     for (int32 i = 0; i < ActiveCount; ++i)
     {
         uint8* Address = ParticleData + i * ParticleStride;
         DECLARE_PARTICLE_PTR(Particle, Address);
-        Particle->Lifetime = UParticleModuleLifeTime::Lifetime.GetValue(&Rand);
-        UE_LOG(LogLevel::Display, "Lifetime Value : %f", Particle->Lifetime);
+        Particle->Lifetime = Lifetime.GetValue();
+        //UE_LOG(LogLevel::Display, "Lifetime Value : %f", Particle->Lifetime);
     }
 
 }
