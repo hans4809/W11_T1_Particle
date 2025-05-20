@@ -159,26 +159,22 @@ struct FDynamicEmitterDataBase
 
 struct FDynamicSpriteEmitterDataBase : public FDynamicEmitterDataBase
 {
-
-    FDynamicSpriteEmitterReplayDataBase Source;
-    
-    /** Returns the source data for this particle system */
-    virtual const FDynamicSpriteEmitterReplayDataBase& GetSource() const override
-    {
-        return Source;
-    }
-    
+    virtual const FDynamicSpriteEmitterReplayDataBase* GetSourceData() const = 0;
     void SortSpriteParticles();
     
     
     FDynamicEmitterReplayDataBase& GetSource();
 
-    //int GetDynamicVertexStride() const;
+    // 추상화된 기본 제공
+    virtual const int32 GetDynamicVertexStride() const override
+    {
+        return sizeof(FParticleSpriteVertex);
+    }
 };
 
 struct FDynamicSpriteEmitterData : public FDynamicSpriteEmitterDataBase
 {
-    //FDynamicSpriteEmitterReplayData Source;
+    FDynamicSpriteEmitterReplayData Source;
 
 	/** Returns the source data for this particle system */
 	/*virtual const FDynamicSpriteEmitterReplayData& GetSource() const override
@@ -186,7 +182,17 @@ struct FDynamicSpriteEmitterData : public FDynamicSpriteEmitterDataBase
 		return Source;
 	}
     */
-    virtual int32 const GetDynamicVertexStride() const override
+    virtual const FDynamicEmitterReplayDataBase& GetSource() const override
+    {
+        return Source;
+    }
+
+    virtual const FDynamicSpriteEmitterReplayDataBase* GetSourceData() const override
+    {
+        return &Source;
+    }
+
+    virtual const int32 GetDynamicVertexStride() const override
     {
         return sizeof(FParticleSpriteVertex);
     }
