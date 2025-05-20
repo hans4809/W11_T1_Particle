@@ -24,8 +24,10 @@ void UParticleModuleVelocity::Spawn(FParticleEmitterInstance* Owner, int32 Offse
     const FVector EmitterOrigin = Owner->GetEmitterOrigin();
     
     for (int32 i = 0; i < Owner->ActiveParticles; ++i) {
-        uint8* Address = ParticleData + i * ParticleStride;
+
+        uint8* Address = Owner->ParticleData + i * Owner->ParticleStride;
         DECLARE_PARTICLE_PTR(Particle, Address);
+
         if (!Particle) {
             continue;
         }
