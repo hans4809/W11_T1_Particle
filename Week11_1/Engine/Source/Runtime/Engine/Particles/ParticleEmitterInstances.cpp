@@ -274,7 +274,7 @@ FDynamicEmitterDataBase* FParticleMeshEmitterInstance::GetDynamicData()
 {
     UParticleLODLevel* LODLevel = SpriteTemplate->GetLODLevel(CurrentLODLevelIndex);
 
-    FDynamicSpriteEmitterData* NewEmitterData = new FDynamicSpriteEmitterData();
+    FDynamicMeshEmitterData* NewEmitterData = new FDynamicMeshEmitterData();
 
     if (!FillReplayData(NewEmitterData->Source))
     {

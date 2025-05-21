@@ -558,12 +558,10 @@ void ParticlesEmitterPanel::RenderEmitterAddButton()
         NewLODLevel->SpawnModules.Add(SpawnModule);
         NewLODLevel->AnalyzeModules();
 
-        for (auto& lodLevel : NewEmitter->LODLevels)
+
+        for (auto& Module : NewLODLevel->Modules)
         {
-            for (auto& Module : lodLevel->Modules)
-            {
-                Module->InitializeDefaults();
-            }
+            Module->InitializeDefaults();
         }
 
         UI->Component->Deactivate();
