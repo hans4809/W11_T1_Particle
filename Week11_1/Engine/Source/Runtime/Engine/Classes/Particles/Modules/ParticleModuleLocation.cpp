@@ -3,6 +3,7 @@
 #include "Core/Math/RandomStream.h"
 #include <Particles/ParticleMacros.h>
 #include "Particles/Modules/ParticleModuleDefaults.h"
+
 void UParticleModuleLocation::InitializeDefaults()
 {
     UDistributionVectorUniform* DefaultDistribution = FObjectFactory::ConstructObject<UDistributionVectorUniform>(nullptr);

@@ -1094,7 +1094,10 @@ void UParticleSystemComponent::UpdateAllEmitters(float DeltaTime)
 
         // Update 모듈 적용
         for (UParticleModule* Module : Instance->CurrentLODLevel->UpdateModules) {
-            Module->Update(Instance, /*offset*/ 0, DeltaTime);
+            if (Module->bEnabled)
+            {
+                Module->Update(Instance, /*offset*/ 0, DeltaTime);
+            }
         }
     }
 }

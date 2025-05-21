@@ -6,7 +6,6 @@
 
 void UParticleModuleLifeTime::InitializeDefaults()
 {
-    
     UDistributionFloatConstant* DefaultDistribution = FObjectFactory::ConstructObject<UDistributionFloatConstant>(nullptr);
     DefaultDistribution->SetValue(ParticleModuleDefaults::Lifetime::Constant);
     Lifetime.Distribution = DefaultDistribution;

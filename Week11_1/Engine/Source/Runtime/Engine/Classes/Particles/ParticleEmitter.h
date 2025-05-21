@@ -55,4 +55,11 @@ public:
     UParticleSpriteEmitter() = default;
 
     virtual FParticleEmitterInstance* CreateInstance(UParticleSystemComponent* InComponent) override;
+
+    UPROPERTY(
+        EditAnywhere,
+        uint32,
+        MaxNumParticles,
+        = 1024
+    )
 };

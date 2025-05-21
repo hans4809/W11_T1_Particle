@@ -77,7 +77,7 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
     if (LocalGizmo == nullptr && WorldType)
     {
         LocalGizmo = FObjectFactory::ConstructObject<UTransformGizmo>(this);
-
+        UParticleModuleLocation* Loc = nullptr;
         // TODO : Serialize Save/Load Test 코드 나중에 삭제해야댐
         //DummyTest::TestDummyObject2Serialization(GEngine);
         if(WorldType == EWorldType::Editor)
@@ -85,10 +85,12 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
             AActor* TestActor = SpawnActor<AActor>();
             UParticleSystemComponent* TestComp = TestActor->AddComponent<UParticleSystemComponent>(EComponentOrigin::Runtime);
             // TODO : ParticleSystemAsset SaveLoad Test 코드
+
             UParticleSystem* TestParticleSystem = UAssetManager::Get().Get<UParticleSystem>(TEXT("TestParticle"));
             if (TestParticleSystem == nullptr)
             {
                 TestParticleSystem = FObjectFactory::ConstructObject<UParticleSystem>(this);
+                
                 UParticleEmitter* NewEmitter = FObjectFactory::ConstructObject<UParticleSpriteEmitter>(nullptr);
                 UParticleLODLevel* NewLODLevel = FObjectFactory::ConstructObject<UParticleLODLevel>(nullptr);
             
@@ -104,6 +106,24 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
             
                 NewEmitter->LODLevels.Add(NewLODLevel);
                 TestParticleSystem->Emitters.Add(NewEmitter);
+
+                NewEmitter = FObjectFactory::ConstructObject<UParticleSpriteEmitter>(nullptr);
+                NewLODLevel = FObjectFactory::ConstructObject<UParticleLODLevel>(nullptr);
+
+                NewLODLevel->RequiredModule = FObjectFactory::ConstructObject<UParticleModuleRequired>(nullptr);
+                NewLODLevel->Modules.Add(NewLODLevel->RequiredModule);
+                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSpawn>(nullptr));
+                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleVelocity>(nullptr));
+                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleLifeTime>(nullptr));
+                Loc = FObjectFactory::ConstructObject<UParticleModuleLocation>(nullptr);
+                NewLODLevel->Modules.Add(Loc);
+                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSize>(nullptr));
+                NewLODLevel->TypeDataModule = FObjectFactory::ConstructObject<UParticleModuleTypeDataMesh>(nullptr);
+                dynamic_cast<UParticleModuleTypeDataMesh*>(NewLODLevel->TypeDataModule)->Mesh = FManagerOBJ::GetStaticMesh(L"apple_mid.obj");
+
+                NewEmitter->LODLevels.Add(NewLODLevel);
+                TestParticleSystem->Emitters.Add(NewEmitter);
+
                 TestComp->Template = TestParticleSystem;
             }
 
@@ -117,6 +137,11 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                         Module->InitializeDefaults();
                     }
                 }
+            }
+            if (Loc) {
+                Cast<UDistributionVectorUniform>(Loc->StartLocation.Distribution)->MinValue = FVector(100, 100, 100);
+                Cast<UDistributionVectorUniform>(Loc->StartLocation.Distribution)->MaxValue = FVector(100, 100, 100);
+
             }
             UAssetManager::Get().SaveAsset(TestParticleSystem, TEXT("Contents/Particles/TestParticle.ttalkak"));
             TestComp->Activate();

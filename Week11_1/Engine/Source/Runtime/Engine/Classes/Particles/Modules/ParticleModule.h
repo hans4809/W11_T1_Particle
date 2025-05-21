@@ -43,6 +43,12 @@ public:
     void SetPayloadOffset(int32 InOffset) { PayloadOffset = InOffset; }
     int32 GetPayloadOffset() const { return PayloadOffset; }
 
+    UPROPERTY(
+        EditAnywhere,
+        bool,
+        bEnabled,
+        = true
+    )
 protected:
     int32 PayloadOffset = -1;
 };

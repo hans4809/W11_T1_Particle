@@ -68,7 +68,7 @@ FParticleEmitterInstance* UParticleSpriteEmitter::CreateInstance(UParticleSystem
         Instance->CurrentLODLevel = LODLevel; // LOD는 0만 사용
         Instance->CurrentLODLevel->AnalyzeModules();
         Instance->RequiredModule = Instance->CurrentLODLevel->RequiredModule;
-        Instance->Init(1024); // TODO : 임시. 값을 정하게 해줘야함.
+        Instance->Init(MaxNumParticles); // TODO : 임시. 값을 정하게 해줘야함.
     }
 
     return Instance;
