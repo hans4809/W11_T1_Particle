@@ -178,6 +178,11 @@ UTexture* FParticleEmitterInstance::GetTexture() const
     return RequiredModule ? RequiredModule->Texture : nullptr;
 }
 
+UStaticMesh* FParticleEmitterInstance::GetMesh() const
+{
+    return RequiredModule ? RequiredModule->Mesh : nullptr;
+}
+
 FVector FParticleEmitterInstance::GetEmitterOrigin() const
 {
     return RequiredModule ? RequiredModule->EmitterOrigin : FVector::ZeroVector;
@@ -237,7 +242,7 @@ FDynamicEmitterDataBase* FParticleSpriteEmitterInstance::GetDynamicData()
     UParticleLODLevel* LODLevel = SpriteTemplate->GetLODLevel(CurrentLODLevelIndex);
     
     FDynamicSpriteEmitterData* NewEmitterData = new FDynamicSpriteEmitterData();
-
+    
     if (!FillReplayData(NewEmitterData->Source))
     {
         delete NewEmitterData;
@@ -266,6 +271,18 @@ bool FParticleSpriteEmitterInstance::FillReplayData(FDynamicEmitterReplayDataBas
     NewReplayData->SubImages_Horizontal = GetSubImageH();
     NewReplayData->SubImages_Vertical = GetSubImageV();
 
+
+    // FIXME : 각 모듈의 FillReplayData() 함수로 위임하기
+    UParticleModuleSubUV* SubUVModule = nullptr;
+    for (UParticleModule* Module : CurrentLODLevel->Modules)
+    {
+        SubUVModule = Cast<UParticleModuleSubUV>(Module);
+        if (SubUVModule)
+            break;
+    }
+
+    NewReplayData->SubUVDataOffset = SubUVModule ? SubUVModule->GetPayloadOffset() : -1;
+
     return true;
 }
 
@@ -275,7 +292,8 @@ FDynamicEmitterDataBase* FParticleMeshEmitterInstance::GetDynamicData()
     UParticleLODLevel* LODLevel = SpriteTemplate->GetLODLevel(CurrentLODLevelIndex);
 
     FDynamicMeshEmitterData* NewEmitterData = new FDynamicMeshEmitterData();
-
+    NewEmitterData->Mesh = GetMesh();
+    
     if (!FillReplayData(NewEmitterData->Source))
     {
         delete NewEmitterData;
@@ -293,7 +311,6 @@ bool FParticleMeshEmitterInstance::FillReplayData(FDynamicEmitterReplayDataBase&
     }
 
     OutData.eEmitterType = DET_Mesh;
-
 
     FDynamicMeshEmitterReplayData* NewReplayData =
         static_cast<FDynamicMeshEmitterReplayData*>(&OutData);
