@@ -55,7 +55,7 @@ FParticleEmitterInstance* UParticleSpriteEmitter::CreateInstance(UParticleSystem
     if (LODLevel->TypeDataModule)
     {
         Instance = LODLevel->TypeDataModule->CreateInstance(this, InComponent);
-        LODLevel->RequiredModule->Mesh = FManagerOBJ::CreateStaticMesh("Assets/Dodge/Dodge.obj");
+        //LODLevel->RequiredModule->Mesh = FManagerOBJ::CreateStaticMesh("Assets/Dodge/Dodge.obj");
 
     }
     // 없을경우 스프라이트 생성

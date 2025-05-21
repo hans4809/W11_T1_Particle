@@ -8,6 +8,17 @@ class UParticleModuleTypeDataMesh : public UParticleModuleTypeDataBase
 {
     DECLARE_CLASS(UParticleModuleTypeDataMesh, UParticleModuleTypeDataBase)
 public:
+    UPROPERTY(EditAnywhere, FString, MeshPath, = "Assets/apple_mid.obj")
+
+
+    UPROPERTY(
+        EditAnywhere,
+        UStaticMesh*,
+        Mesh,
+        = nullptr
+    )
+
+public:
     UParticleModuleTypeDataMesh() = default;
 
     virtual FParticleEmitterInstance* CreateInstance(
@@ -16,12 +27,9 @@ public:
 
     virtual bool IsAMeshEmitter() const override { return true; }
 
-    UPROPERTY(
-        EditAnywhere,
-        UStaticMesh*,
-        Mesh,
-        = nullptr
-    )
+    virtual void Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, float Interp, FBaseParticle* Particle) override;
+
+    virtual EModuleType GetType() const override;
 
     FRandomStream RandomStream;
 };

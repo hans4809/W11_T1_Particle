@@ -2,6 +2,8 @@
 #include "Particles/ParticleEmitterInstances.h"
 #include "Particles/ParticleEmitter.h"
 #include "Engine/Classes/Particles/ParticleLODLevel.h"
+#include "Particles/Modules/ParticleModuleRequired.h"
+#include "Engine/FLoaderOBJ.h"
 
 FParticleEmitterInstance* UParticleModuleTypeDataBase::CreateInstance(UParticleEmitter* InEmitterParent, UParticleSystemComponent* InComponent)
 {
@@ -23,4 +25,17 @@ FParticleEmitterInstance* UParticleModuleTypeDataMesh::CreateInstance(UParticleE
     Instance->Init(64); // TODO : 임시. 값을 정하게 해줘야함.
 
     return Instance;
+}
+
+void UParticleModuleTypeDataMesh::Spawn(FParticleEmitterInstance* Owner, int32 Offset, float SpawnTime, float Interp, FBaseParticle* Particle)
+{
+    if (!MeshPath.IsEmpty())
+    {
+        Owner->RequiredModule->Mesh = FManagerOBJ::CreateStaticMesh(MeshPath.ToWideString());
+    }
+}
+
+EModuleType UParticleModuleTypeDataMesh::GetType() const
+{
+    return EModuleType::Spawn;
 }
