@@ -331,10 +331,7 @@ void FParticleRenderPass::Execute(const std::shared_ptr<FViewportClient> InViewp
                     {
                         // StaticMesh 가져오기
                         const UStaticMesh* StaticMesh = static_cast<const FDynamicMeshEmitterData*>(ParticleRenderData)->Mesh;
-                        assert(StaticMesh); // StaticMesh가 없음
 
-                        StaticMesh = FManagerOBJ::CreateStaticMesh(L"Assets/apple_mid.obj");
-                        
                         const FDynamicMeshEmitterReplayData& Source = static_cast<const FDynamicMeshEmitterReplayData&>(ParticleRenderData->GetSource());
 
 					    int32 VertexStride = sizeof(FMeshParticleInstanceVertex);
