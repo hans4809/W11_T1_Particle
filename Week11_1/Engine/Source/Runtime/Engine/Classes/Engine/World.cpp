@@ -108,7 +108,8 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSize>(nullptr));
                 NewLODLevel->TypeDataModule = FObjectFactory::ConstructObject<UParticleModuleTypeDataMesh>(nullptr);
                 dynamic_cast<UParticleModuleTypeDataMesh*>(NewLODLevel->TypeDataModule)->Mesh = FManagerOBJ::CreateStaticMesh(L"Assets/apple_mid.obj");
-            
+                NewLODLevel->Modules.Add(NewLODLevel->TypeDataModule);
+
                 NewEmitter->LODLevels.Add(NewLODLevel);
                 TestParticleSystem->Emitters.Add(NewEmitter);
 
@@ -125,6 +126,7 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSize>(nullptr));
                 NewLODLevel->TypeDataModule = FObjectFactory::ConstructObject<UParticleModuleTypeDataMesh>(nullptr);
                 dynamic_cast<UParticleModuleTypeDataMesh*>(NewLODLevel->TypeDataModule)->Mesh = FManagerOBJ::CreateStaticMesh(L"Assets/apple_mid.obj");
+                NewLODLevel->Modules.Add(NewLODLevel->TypeDataModule);
 
                 NewEmitter->LODLevels.Add(NewLODLevel);
                 TestParticleSystem->Emitters.Add(NewEmitter);
