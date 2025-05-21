@@ -79,7 +79,7 @@ public:
     void RegisterFlags(UObject* InObject);
     void RemoveFlags(UObject* InObject);
 
-    const float PreviewScreenWidth = 0.4f;
+    const float PreviewScreenWidth = 0.5f;
     const float PreviewScreenHeight = 0.4f;
     UParticleSystemComponent* Component = nullptr;
 private:

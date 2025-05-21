@@ -83,7 +83,7 @@ void FParticlePreviewUI::Render() const
         }
     }
 
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
 }
 
 void FParticlePreviewUI::OnResize(HWND hWnd) const

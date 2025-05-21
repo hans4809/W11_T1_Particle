@@ -178,8 +178,11 @@ void FRenderResourceManager::ReleaseResources()
 
     for (ID3D11BlendState* blendState : BlendStates)
     {
-        blendState->Release();
-        blendState = nullptr;
+        if (blendState)
+        {
+            blendState->Release();
+            blendState = nullptr;
+        }
     }
 
     for (ID3D11SamplerState* samplerState : SamplerStates)

@@ -166,7 +166,6 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                 Cast<UDistributionVectorUniform>(Loc->StartLocation.Distribution)->MaxValue = FVector(100, 100, 100);
 
             }
-            UAssetManager::Get().SaveAsset(TestParticleSystem, TEXT("Contents/Particles/TestParticle.ttalkak"));
             TestComp->Activate();
         }
 

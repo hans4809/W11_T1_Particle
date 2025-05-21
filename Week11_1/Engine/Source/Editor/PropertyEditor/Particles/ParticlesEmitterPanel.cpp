@@ -255,6 +255,22 @@ void ParticlesEmitterPanel::Initialize(SLevelEditor* LevelEditor, float InWidth,
 
 void ParticlesEmitterPanel::Render()
 {
+
+        /* Pre Setup */
+    ImGuiIO& io = ImGui::GetIO();
+
+    const float PanelWidth = (Width) * (1 - UI->PreviewScreenWidth);
+    const float PanelHeight = (Height) * (1 - UI->PreviewScreenHeight) - 20.0f;
+
+    const float PanelPosX = Width - PanelWidth;
+    const float PanelPosY = 20.0f;
+
+    /* Panel Position */
+    ImGui::SetNextWindowPos(ImVec2(PanelPosX, PanelPosY), ImGuiCond_Always);
+
+    /* Panel Size */
+    ImGui::SetNextWindowSize(ImVec2(PanelWidth, PanelHeight), ImGuiCond_Always);
+
     ImGui::Begin("Emitters Panel", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
 
     const TArray<UParticleEmitter*>& Emitters = UI->GetSelectedSystem()->Emitters;
@@ -274,7 +290,7 @@ void ParticlesEmitterPanel::Render()
 
         ImGui::PopID(); // Emitter별로 고유 ID 스택 pop
 
-        if (i < Emitters.Num() - 1)
+        //if (i < Emitters.Num() - 1)
             ImGui::SameLine();
     }
 
@@ -525,6 +541,9 @@ void ParticlesEmitterPanel::RenderModuleAddButton(UParticleEmitter* Emitter)
                 {
                     UParticleModule* NewModule = Cast<UParticleModule>(FObjectFactory::ConstructObject(Child, Emitter));
                     Emitter->LODLevels[l]->Modules.Add(NewModule);
+                    NewModule->InitializeDefaults();
+                    UI->Component->ForceReset();
+                    UI->Component->Activate();
                     UI->RegisterFlags(NewModule);
                 }
                 ImGui::CloseCurrentPopup();
@@ -564,7 +583,7 @@ void ParticlesEmitterPanel::RenderEmitterAddButton()
             Module->InitializeDefaults();
         }
 
-        UI->Component->Deactivate();
+        UI->Component->ForceReset();
         UI->Component->Activate();
         UI->RegisterFlags(ParticleSystem);
     }
