@@ -34,6 +34,7 @@ private:
 
 public:
     UAssetManager() = default;
+    ~UAssetManager();
 
     static bool IsInitialized();
 

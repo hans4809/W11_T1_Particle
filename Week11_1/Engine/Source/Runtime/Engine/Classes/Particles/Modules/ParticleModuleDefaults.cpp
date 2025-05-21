@@ -1,7 +1,8 @@
 #include "ParticleModuleDefaults.h"
 #include "Math/Vector.h"
 
-const FWString ParticleModuleDefaults::Required::TexturePath = L"Contents/Textures/Particles/hit_2.png";
+const FString ParticleModuleDefaults::Required::TexturePath = TEXT("Contents/Textures/Particles/hit_2.png");
+const FString ParticleModuleDefaults::Required::TextureName = TEXT("hit_2");
 //L"Contents/Textures/Particles/jewel_particle_yellow@2x.png";
 const FVector ParticleModuleDefaults::Required::EmitterOrigin = FVector::ZeroVector;
 const FRotator ParticleModuleDefaults::Required::EmitterRotation = FRotator::ZeroRotator;

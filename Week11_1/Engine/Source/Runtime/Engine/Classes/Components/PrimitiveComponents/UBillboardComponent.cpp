@@ -7,6 +7,7 @@
 #include "LaunchEngineLoop.h"
 #include "WindowsCursor.h"
 #include "Engine/World.h"
+#include "Engine/Asset/AssetManager.h"
 #include "Math/MathUtility.h"
 #include "UnrealEd/EditorViewportClient.h"
 #include "LevelEditor/SLevelEditor.h"
@@ -48,9 +49,10 @@ int UBillboardComponent::CheckRayIntersection(FVector& rayOrigin, FVector& rayDi
 }
 
 
-void UBillboardComponent::SetTexture(FWString _fileName)
+void UBillboardComponent::SetTexture(FString _fileName)
 {
-	Texture = GEngineLoop.ResourceManager.GetTexture(_fileName);
+	//Texture = GEngineLoop.ResourceManager.GetTexture(_fileName);
+    Texture = UAssetManager::Get().Get<UTexture>(_fileName);
 }
 
 // void UBillboardComponent::SetUUIDParent(USceneComponent* _parent)
@@ -146,7 +148,7 @@ void UBillboardComponent::SaveComponentInfo(FActorComponentInfo& OutInfo)
 {
     FBillboardComponentInfo& Info = static_cast<FBillboardComponentInfo&>(OutInfo);
     Super::SaveComponentInfo(Info);
-    Info.TexturePath = Texture->path;
+    Info.TexturePath = Texture->Path;
     Info.bOnlyForEditor = bOnlyForEditor;
 }
 

@@ -128,8 +128,8 @@ void UTextComponent::SetText(const FWString& _text)
 	int textSize = static_cast<int>(_text.size());
 
 
-	const uint32 BitmapWidth = Texture->width;
-	const uint32 BitmapHeight = Texture->height;
+	const uint32 BitmapWidth = Texture->Width;
+	const uint32 BitmapHeight = Texture->Height;
 
 	const float CellWidth =  static_cast<float>(BitmapWidth) / ColumnCount;
 	const float CellHeight = static_cast<float>(BitmapHeight) / RowCount;

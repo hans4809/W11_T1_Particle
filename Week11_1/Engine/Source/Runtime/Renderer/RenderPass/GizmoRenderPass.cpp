@@ -5,6 +5,7 @@
 #include "Components/Mesh/StaticMesh.h"
 #include "D3D11RHI/CBStructDefine.h"
 #include "Engine/World.h"
+#include "Engine/Asset/AssetManager.h"
 #include "GameFramework/Actor.h"
 #include "LevelEditor/SLevelEditor.h"
 #include "Renderer/Renderer.h"
@@ -174,7 +175,8 @@ void FGizmoRenderPass::UpdateMaterialConstants(const FObjMaterialInfo& MaterialI
     
     if (MaterialInfo.bHasTexture == true)
     {
-        const UTexture* texture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
+        //const UTexture* texture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
+        UTexture* texture = UAssetManager::Get().Get<UTexture>(MaterialInfo.DiffuseTextureName);
         Graphics.DeviceContext->PSSetShaderResources(0, 1, &texture->TextureSRV);
         ID3D11SamplerState* linearSampler = renderResourceManager->GetSamplerState(ESamplerType::Linear);
         Graphics.DeviceContext->PSSetSamplers(static_cast<uint32>(ESamplerType::Linear), 1, &linearSampler);

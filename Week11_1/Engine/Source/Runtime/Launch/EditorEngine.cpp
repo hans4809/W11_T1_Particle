@@ -21,6 +21,7 @@
 #include "UObject/Casts.h"
 #include "Engine/Asset/AssetManager.h"
 #include "Engine/Asset/AssetImporter.h"
+#include "Engine/Asset/Texture/TextureFactory.h"
 #include "GameFramework/PlayerController.h"
 #include "UnrealEd/SkeletalPreviewUI.h"
 #include "UnrealEd/ParticlePreviewUI.h"
@@ -44,6 +45,9 @@ void UEditorEngine::Init()
     {
         AssetManager = FObjectFactory::ConstructObject<UAssetManager>(this);
         assert(AssetManager);
+        
+        UTextureFactory* TextureFactory = FObjectFactory::ConstructObject<UTextureFactory>(this);
+        AssetManager->RegisterFactory(TextureFactory);
         AssetManager->InitAssetManager();
         AssetManager->Initalize();
     }
@@ -51,6 +55,8 @@ void UEditorEngine::Init()
     if (AssetImporter == nullptr)
     {
         AssetImporter = FObjectFactory::ConstructObject<UAssetImporter>(this);
+        AssetImporter->ImportDirectory(TEXT("Assets/Texture"), nullptr);
+        AssetImporter->ImportDirectory(TEXT("Contents/Textures"), nullptr);
         assert(AssetImporter);
     }
 

@@ -31,7 +31,6 @@ int32 FEngineLoop::Init(const HINSTANCE hInstance)
     
     Renderer.Initialize(&GraphicDevice);
     ResourceManager.Initialize(&GraphicDevice);
-
     
     // if (bIsEditor)
     {

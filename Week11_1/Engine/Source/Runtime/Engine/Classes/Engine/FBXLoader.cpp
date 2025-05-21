@@ -1041,9 +1041,7 @@ UAnimDataModel* FFBXLoader::GetAnimData(const FString& FilePath)
 }
 
 // FBX 머티리얼 → FObjMaterialInfo 변환 헬퍼
-FObjMaterialInfo FFBXLoader::ConvertFbxToObjMaterialInfo(
-    FbxSurfaceMaterial* FbxMat,
-    const FString& BasePath)
+FObjMaterialInfo FFBXLoader::ConvertFbxToObjMaterialInfo(FbxSurfaceMaterial* FbxMat, const FString& BasePath)
 {
     FObjMaterialInfo OutInfo;
 
@@ -1109,7 +1107,7 @@ FObjMaterialInfo FFBXLoader::ConvertFbxToObjMaterialInfo(
     }
 
     // 텍스처 채널 (Diffuse, Ambient, Specular, Bump/Normal, Alpha)
-    auto ReadFirstTexture = [&](const char* PropName, FString& OutName, FWString& OutPath)
+    auto ReadFirstTexture = [&](const char* PropName, FString& OutName, FString& OutPath)
     {
         auto prop = FbxMat->FindProperty(PropName);
         if (!prop.IsValid()) return;

@@ -21,6 +21,7 @@
 #include "Components/PrimitiveComponents/QuadTexture.h"
 #include "Components/PrimitiveComponents/MeshComponents/StaticMeshComponents/SkySphereComponent.h"
 #include "Engine/FLoaderOBJ.h"
+#include "Engine/Asset/AssetManager.h"
 #include "LevelEditor/SLevelEditor.h"
 #include "Math/JungleMath.h"
 #include "Particles/ParticleHelper.h"
@@ -736,8 +737,11 @@ void FParticleRenderPass::UpdateMaterialConstants(const FObjMaterialInfo& Materi
     
     if (MaterialInfo.bHasTexture == true)
     {
-        const UTexture* texture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
-        const UTexture* NormalTexture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.NormalTexturePath);
+        //const UTexture* texture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
+        //const UTexture* NormalTexture = GEngineLoop.ResourceManager.GetTexture(MaterialInfo.NormalTexturePath);
+        UTexture* texture = UAssetManager::Get().Get<UTexture>(MaterialInfo.DiffuseTextureName);
+        UTexture* NormalTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.NormalTexturePath);
+        
         if (texture)
         {
             Graphics.DeviceContext->PSSetShaderResources(0, 1, &texture->TextureSRV);

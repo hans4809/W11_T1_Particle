@@ -6,6 +6,8 @@
 #include "D3D11RHI/CBStructDefine.h"
 #include "D3D11RHI/GraphicDevice.h"
 #include "Engine/World.h"
+#include "Engine/Asset/AssetManager.h"
+#include "Particles/Modules/ParticleModuleDefaults.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/RenderResourceManager.h"
 #include "UObject/UObjectIterator.h"
@@ -56,7 +58,8 @@ void FFadeRenderPass::Prepare(std::shared_ptr<FViewportClient> InViewportClient)
         Graphics.DeviceContext->PSSetSamplers(0, 1, &Sampler);
 
         const auto PreviousSRV = Graphics.GetPreviousShaderResourceView();
-        const auto LogoSRV = GEngineLoop.ResourceManager.GetTexture(L"Contents/Textures/Logo.png")->TextureSRV;
+        //const auto LogoSRV = GEngineLoop.ResourceManager.GetTexture(L"Contents/Textures/Logo.png")->TextureSRV;
+        const auto LogoSRV = UAssetManager::Get().Get<UTexture>(TEXT("Logo"))->TextureSRV;
         const auto SRV = (AccumulatedFadeAlpha > 0.0f && AccumulatedFadeAlpha < 1.0f) ? LogoSRV : PreviousSRV;
         Graphics.DeviceContext->PSSetShaderResources(1, 1, &SRV);
     }

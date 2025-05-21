@@ -18,9 +18,10 @@ UAsset* UParticleSystemFactory::ImportFromFile(const FString& InFilePath)
     {
         return nullptr;
     }
-
-    NewParticleSystem->GetDescriptor().AbsolutePath = InFilePath;
-    NewParticleSystem->GetDescriptor().RelativePath = std::filesystem::relative(InFilePath, "Content").string();
+    
+    std::filesystem::path filePath(InFilePath);
+    NewParticleSystem->GetDescriptor().AbsolutePath = FString(filePath.generic_wstring().c_str());
+    NewParticleSystem->GetDescriptor().RelativePath = std::filesystem::relative(filePath, std::filesystem::current_path()).string();
 
     return NewParticleSystem;
 }

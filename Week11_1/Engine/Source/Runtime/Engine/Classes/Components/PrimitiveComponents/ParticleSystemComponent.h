@@ -620,4 +620,7 @@ protected:
     
     void ClearDynamicData();
 
+public:
+    void DestroyComponent() override;
+    void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 };

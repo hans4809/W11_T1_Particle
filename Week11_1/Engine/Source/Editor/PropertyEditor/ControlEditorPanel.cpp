@@ -35,6 +35,7 @@
 #include "Renderer/Renderer.h"
 #include "UObject/ObjectTypes.h"
 #include "Animation/CustomAnimInstance/TestAnimInstance.h"
+#include "Engine/Asset/AssetManager.h"
 #include "Font/IconDefs.h"
 
 void ControlEditorPanel::Initialize(SLevelEditor* LevelEditor, float Width, float Height)
@@ -681,7 +682,8 @@ void ControlEditorPanel::CreateFlagButton() const
 
 void ControlEditorPanel::CreateShaderHotReloadButton(const ImVec2 ButtonSize) const
 {
-    ID3D11ShaderResourceView* IconTextureSRV = GEngineLoop.ResourceManager.GetTexture(L"Assets/Texture/HotReload.png")->TextureSRV;
+    //ID3D11ShaderResourceView* IconTextureSRV = GEngineLoop.ResourceManager.GetTexture(L"Assets/Texture/HotReload.png")->TextureSRV;
+    ID3D11ShaderResourceView* IconTextureSRV = UAssetManager::Get().Get<UTexture>(TEXT("HotReload"))->TextureSRV;
     const ImTextureID TextureID = reinterpret_cast<ImTextureID>(IconTextureSRV); // 실제 사용되는 텍스처 SRV
     if (ImGui::ImageButton("btn1", TextureID, ButtonSize))
     {

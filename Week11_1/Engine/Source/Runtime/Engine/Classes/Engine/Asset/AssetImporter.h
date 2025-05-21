@@ -30,9 +30,9 @@ public:
     ~UAssetImporter() override;
     
     // 단일 파일 임포트
-    void Import(const FString& InFilepath, ImportCallback InCallback);
+    void Import(const FString& InFilepath, const ImportCallback& InCallback);
     // 디렉터리 전체 임포트
-    void ImportDirectory(const FString& InDir, const ImportSettings& InSettings, ImportCallback InCallback);
+    void ImportDirectory(const FString& InDir, const ImportCallback& InCallback);
 
 private:
     // 팩토리 검색 및 호출 

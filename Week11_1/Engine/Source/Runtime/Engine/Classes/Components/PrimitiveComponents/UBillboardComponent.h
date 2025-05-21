@@ -7,12 +7,12 @@ class UTexture;
 struct FBillboardComponentInfo : public FPrimitiveComponentInfo
 {
     DECLARE_ACTORCOMPONENT_INFO(FBillboardComponentInfo);
-    FWString TexturePath;
+    FString TexturePath;
     bool bOnlyForEditor;
 
     FBillboardComponentInfo()
         : FPrimitiveComponentInfo()
-        , TexturePath(L"")
+        , TexturePath("")
     {
         InfoType = TEXT("FBillboardComponentInfo");
         ComponentClass = TEXT("UBillboardComponent");
@@ -46,7 +46,7 @@ public:
         FVector& rayDirection, float& pfNearHitDistance
     ) override;
 
-    void SetTexture(FWString _fileName);
+    void SetTexture(FString _fileName);
     //void SetUUIDParent(USceneComponent* _parent);
     FMatrix CreateBillboardMatrix();
     virtual UObject* Duplicate(UObject* InOuter) override;
