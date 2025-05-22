@@ -222,12 +222,11 @@ struct FDynamicMeshEmitterData : public FDynamicSpriteEmitterDataBase
     {
         return Source;
     }
-
     virtual int32 const GetDynamicVertexStride() const override
     {
         return sizeof(FMeshParticleInstanceVertex);
     }
-    UStaticMesh* Mesh;
+    UStaticMesh* Mesh = nullptr;
 };
 
 FORCEINLINE FVector2D GetParticleSizeWithUVFlipInSign(const FBaseParticle& Particle, const FVector2D& ScaledSize)

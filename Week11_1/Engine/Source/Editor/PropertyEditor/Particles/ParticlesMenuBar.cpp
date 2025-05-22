@@ -1,5 +1,6 @@
 #include "ParticlesMenuBar.h"
 #include "UnrealEd/ParticlePreviewUI.h"
+#include "Engine/Asset/AssetManager.h"
 
 void ParticlesMenuBar::Initialize(SLevelEditor* LevelEditor, float InWidth, float InHeight)
 {
@@ -44,6 +45,10 @@ void ParticlesMenuBar::Render()
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("Open")) {}
+            if (ImGui::MenuItem("Save")) 
+            {
+                UAssetManager::Get().SaveAsset(UI->GetSelectedSystem(), TEXT("Contents/Particles/TestParticle.ttalkak"));
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit"))
@@ -85,7 +90,7 @@ void ParticlesMenuBar::Render()
                 FString SystemName = ParticleSystems[n]->GetDescriptor().AssetName.ToString();
                 if (ImGui::BeginTabItem(*SystemName, &open, ImGuiTabItemFlags_None))
                 {
-                    ImGui::Text("This is the %s tab!", *SystemName);
+                    //ImGui::Text("This is the %s tab!", *SystemName);
                     UI->SetSelectedSystemIndex(n);
                     ImGui::EndTabItem();
                 }

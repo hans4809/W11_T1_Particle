@@ -8,6 +8,7 @@ class SLevelEditor;
 class UParticleEmitter;
 class UParticleModule;
 class FParticlePreviewUI;
+class UParticleModuleTypeDataBase;
 
 class ParticlesEmitterPanel : public UEditorPanel
 {
@@ -21,6 +22,13 @@ private:
     void RenderModuleCell(UParticleModule* Module, UParticleEmitter* Emitter) const;
     void RenderModuleAdd(UParticleEmitter* Emitter);
     void RenderEmitterAdd();
+
+    void RenderEmitter(UParticleEmitter* Emitter);
+    void RenderModuleTypeData(UParticleModuleTypeDataBase* Module, UParticleEmitter* Emitter);
+    void RenderModule(UParticleModule* Module, UParticleEmitter* Emitter);
+    void RenderEmitterAddButton();
+    void RenderModuleAddButton(UParticleEmitter* Emitter);
+
 private:
     SLevelEditor* activeLevelEditor;
     float Width = 30, Height = 300;

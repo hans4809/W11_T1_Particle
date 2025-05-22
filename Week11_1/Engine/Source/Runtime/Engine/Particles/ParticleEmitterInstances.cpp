@@ -116,7 +116,7 @@ void FParticleEmitterInstance::SpawnParticles(int32 Count, float StartTime, floa
 
         for (UParticleModule* Module : CurrentLODLevel->SpawnModules)
         {
-            if (Module)
+            if (Module && Module->bEnabled)
             {
                 float SpawnTime = StartTime + i * Increment;
                 Module->Spawn(this, /*Offset*/ 0, SpawnTime, /*Interp*/ 1.0f, Particle);

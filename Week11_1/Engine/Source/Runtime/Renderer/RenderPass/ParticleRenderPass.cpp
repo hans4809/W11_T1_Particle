@@ -65,7 +65,8 @@ FParticleRenderPass::FParticleRenderPass(const FName& InShaderName) : FBaseRende
     bufferDesc = {};
     bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     //TODO: SpriteParticle에 맞는걸로 넣어주기 지금은 하드코딩
-    bufferDesc.ByteWidth = static_cast<UINT>(sizeof(FMeshParticleInstanceVertex) * 512);
+    //bufferDesc.ByteWidth = static_cast<UINT>(sizeof(FMeshParticleInstanceVertex) * 682);
+    bufferDesc.ByteWidth = static_cast<UINT>(16*4096);
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bufferDesc.MiscFlags = 0;
@@ -332,7 +333,6 @@ void FParticleRenderPass::Execute(const std::shared_ptr<FViewportClient> InViewp
                     {
                         // StaticMesh 가져오기
                         const UStaticMesh* StaticMesh = static_cast<const FDynamicMeshEmitterData*>(ParticleRenderData)->Mesh;
-
                         const FDynamicMeshEmitterReplayData& Source = static_cast<const FDynamicMeshEmitterReplayData&>(ParticleRenderData->GetSource());
 
 					    int32 VertexStride = sizeof(FMeshParticleInstanceVertex);

@@ -136,6 +136,7 @@ void FEngineLoop::Render() const
         else if (LevelEditor->GetViewportClientData(AppWindow).ViewportClientType == EditorPreviewParticle)
         {
             //EditorEngine->GetParticlePreviewUI()->ResizeViewport(ViewportClients[0]);
+            ViewportClients[0]->ShowFlag = (-1);
             LevelEditor->FocusViewportClient(AppWindow, 0);
             EditorEngine->UpdateGizmos(ViewportClients[0]->GetWorld());
             Renderer.Render(ViewportClients[0]);

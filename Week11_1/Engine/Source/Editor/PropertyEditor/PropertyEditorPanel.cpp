@@ -1785,7 +1785,7 @@ void PropertyEditorPanel::DrawParticlesPreviewButton(UParticleSystem* ParticleSy
         {
             TestComp->Template = ParticleSystem;
             TestComp->Activate();
-            EditorEngine->GetParticlePreviewUI()->AddParticleSytstem(TestComp->Template);
+            EditorEngine->GetParticlePreviewUI()->AddParticleSytstem(TestComp, TestComp->Template);
         }
         else
         {

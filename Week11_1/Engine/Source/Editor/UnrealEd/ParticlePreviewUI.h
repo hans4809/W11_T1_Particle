@@ -31,7 +31,7 @@ public:
     TArray<UParticleSystem*>& GetParticleSystemsRef() { return ParticleSystems; }
 
     void CreateEmptyParticleSystem(UObject* InOuter = nullptr);
-    void AddParticleSytstem(UParticleSystem* ParticleSystem);
+    void AddParticleSytstem(UParticleSystemComponent* Component, UParticleSystem* ParticleSystem);
     int32 RemoveParticleSystem(UParticleSystem* ParticleSystem);
     void RemoveParticleSystemAt(int32 Index);
 
@@ -79,8 +79,9 @@ public:
     void RegisterFlags(UObject* InObject);
     void RemoveFlags(UObject* InObject);
 
-    const float PreviewScreenWidth = 0.4f;
+    const float PreviewScreenWidth = 0.5f;
     const float PreviewScreenHeight = 0.4f;
+    UParticleSystemComponent* Component = nullptr;
 private:
     TMap<FString, std::shared_ptr<UEditorPanel>> Panels;
     UWorld* PreviewWorld = nullptr;

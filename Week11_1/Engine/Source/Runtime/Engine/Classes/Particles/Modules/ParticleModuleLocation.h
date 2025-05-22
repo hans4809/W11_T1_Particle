@@ -9,7 +9,7 @@ class UParticleModuleLocation : public UParticleModule
     DECLARE_CLASS(UParticleModuleLocation, UParticleModule)
 
 public:
-    UParticleModuleLocation() = default;
+    UParticleModuleLocation() {}
 
     UPROPERTY(
         EditAnywhere,

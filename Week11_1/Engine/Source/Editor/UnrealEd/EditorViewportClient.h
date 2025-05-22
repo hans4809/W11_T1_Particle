@@ -151,7 +151,7 @@ public:
     static float OrthoSize;
     
     ELevelViewportType ViewportType;
-    uint64 ShowFlag;
+    uint64 ShowFlag = -1;
     EViewModeIndex ViewMode;
 
     FMatrix View;

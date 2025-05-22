@@ -83,7 +83,7 @@ void FParticlePreviewUI::Render() const
         }
     }
 
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
 }
 
 void FParticlePreviewUI::OnResize(HWND hWnd) const
@@ -136,8 +136,12 @@ void FParticlePreviewUI::CreateEmptyParticleSystem(UObject* InOuter)
     RegisterFlags(NewParticleSystem);
 }
 
-void FParticlePreviewUI::AddParticleSytstem(UParticleSystem* ParticleSystem) 
+void FParticlePreviewUI::AddParticleSytstem(UParticleSystemComponent* Component, UParticleSystem* ParticleSystem) 
 { 
+    if (Component)
+    {
+        this->Component = Component;
+    }
     ParticleSystems.Add(ParticleSystem);
     RegisterFlags(ParticleSystem);
 }
@@ -268,14 +272,15 @@ void FParticlePreviewUI::SetSelectedEmitter(const UParticleEmitter* Emitter)
 {
     if (Emitter)
     {
-        const UParticleSystem* ParticleSystem = GetSelectedSystem();
-        if (ParticleSystem)
+        for (int32 k = 0; k < ParticleSystems.Num(); ++k)
         {
-            for (int32 i = 0; i < ParticleSystem->Emitters.Num(); ++i)
+            UParticleSystem* ParticleSystem = ParticleSystems[k];
+            for (int32 j = 0; j < ParticleSystem->Emitters.Num(); ++j)
             {
-                if (ParticleSystem->Emitters[i] == Emitter)
+                if (ParticleSystem->Emitters[j] == Emitter)
                 {
-                    SelectedEmitterIndex = i;
+                    SelectedEmitterIndex = j;
+                    SelectedSystemIndex = k;
                     break;
                 }
             }
@@ -287,15 +292,21 @@ void FParticlePreviewUI::SetSelectedLODLevel(const UParticleLODLevel* LODLevel)
 {
     if (LODLevel)
     {
-        const UParticleEmitter* Emitter = GetSelectedEmitter();
-        if (Emitter)
+        for(int32 k = 0; k < ParticleSystems.Num(); ++k)
         {
-            for (int32 i = 0; i < Emitter->LODLevels.Num(); ++i)
+            UParticleSystem* ParticleSystem = ParticleSystems[k];
+            for (int32 j = 0; j < ParticleSystem->Emitters.Num(); ++j)
             {
-                if (Emitter->LODLevels[i] == LODLevel)
+                UParticleEmitter* Emitter = ParticleSystem->Emitters[j];
+                for (int32 i = 0; i < Emitter->LODLevels.Num(); ++i)
                 {
-                    SelectedLODIndex = i;
-                    break;
+                    if (Emitter->LODLevels[i] == LODLevel)
+                    {
+                        SelectedLODIndex = i;
+                        SelectedEmitterIndex = j;
+                        SelectedSystemIndex = k;
+                        break;
+                    }
                 }
             }
         }
@@ -306,15 +317,26 @@ void FParticlePreviewUI::SetSelectedModule(const UParticleModule* Module)
 {
     if (Module)
     {
-        const UParticleLODLevel* LODLevel = GetSelectedLODLevel();
-        if (LODLevel)
+        for (int32 k = 0; k < ParticleSystems.Num(); ++k)
         {
-            for (int i = 0; i < LODLevel->Modules.Num(); ++i)
+            UParticleSystem* ParticleSystem = ParticleSystems[k];
+            for (int32 j = 0; j < ParticleSystem->Emitters.Num(); ++j)
             {
-                if (LODLevel->Modules[i] == Module)
+                UParticleEmitter* Emitter = ParticleSystem->Emitters[j];
+                for (int32 i = 0; i < Emitter->LODLevels.Num(); ++i)
                 {
-                    SelectedModuleIndex = i;
-                    break;
+                    UParticleLODLevel* LODLevel = Emitter->LODLevels[i];
+                    for (int32 m = 0; m < LODLevel->Modules.Num(); ++m)
+                    {
+                        if (LODLevel->Modules[m] == Module)
+                        {
+                            SelectedModuleIndex = m;
+                            SelectedLODIndex = i;
+                            SelectedEmitterIndex = j;
+                            SelectedSystemIndex = k;
+                            break;
+                        }
+                    }
                 }
             }
         }
