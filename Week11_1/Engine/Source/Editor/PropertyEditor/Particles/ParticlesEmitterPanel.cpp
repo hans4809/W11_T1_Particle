@@ -577,11 +577,11 @@ void ParticlesEmitterPanel::RenderEmitterAddButton()
         NewLODLevel->SpawnModules.Add(SpawnModule);
         NewLODLevel->AnalyzeModules();
 
-
         for (auto& Module : NewLODLevel->Modules)
         {
             Module->InitializeDefaults();
         }
+        UI->Component->Template = ParticleSystem;
 
         UI->Component->ForceReset();
         UI->Component->Activate();

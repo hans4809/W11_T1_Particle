@@ -126,12 +126,13 @@ std::shared_ptr<UEditorPanel> FParticlePreviewUI::GetEditorPanel(const FString& 
 }
 
 // 
-void FParticlePreviewUI::CreateEmptyParticleSystem(UObject* InOuter)
+void FParticlePreviewUI::CreateEmptyParticleSystem(UParticleSystemComponent* Component)
 {
-    UParticleSystem* NewParticleSystem = FObjectFactory::ConstructObject<UParticleSystem>(InOuter);
+    UParticleSystem* NewParticleSystem = FObjectFactory::ConstructObject<UParticleSystem>(nullptr);
     ParticleSystems.Add(NewParticleSystem);
     FAssetDescriptor desc = NewParticleSystem->GetDescriptor();
     desc.AssetName = NewParticleSystem->GetFName();
+    this->Component = Component;
 
     RegisterFlags(NewParticleSystem);
 }

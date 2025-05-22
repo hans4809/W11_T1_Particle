@@ -9,6 +9,7 @@
 #include "Engine/World.h"
 #include "Engine/FLoaderOBJ.h"
 #include "UnrealEd/ImGuiWidget.h"
+#include "CoreUObject/UObject/UObjectIterator.h"
 
 #include "Math/JungleMath.h"
 
@@ -1356,7 +1357,15 @@ void PropertyEditorPanel::RenderForParticleSystem(UParticleSystemComponent* Part
         UParticleSystem* ParticleSystem = ParticleSystemComp->Template;
 
         FName PreviewName = ParticleSystem ? ParticleSystemComp->Template->GetDescriptor().AssetName : FName("None");
-        TMap<FName, UParticleSystem*> Systems = UAssetManager::Get().GetLoadedAssetsByType<UParticleSystem>();
+        //TMap<FName, UParticleSystem*> Systems = UAssetManager::Get().GetLoadedAssetsByType<UParticleSystem>();
+
+        TMap<FName, UParticleSystem*> Systems;
+        
+        for (UParticleSystem* Particle : TObjectRange<UParticleSystem>())
+        {
+            Systems.Add(Particle->GetFName(), Particle);
+        }
+
         if (ImGui::BeginCombo("##ParticleSystems", GetData(PreviewName.ToString()), ImGuiComboFlags_None))
         {
             for (const auto System : Systems)
@@ -1364,6 +1373,8 @@ void PropertyEditorPanel::RenderForParticleSystem(UParticleSystemComponent* Part
                 if (ImGui::Selectable(GetData(System.Key.ToString()), false))
                 {
                     ParticleSystemComp->Template = System.Value;
+                    ParticleSystemComp->ForceReset();
+                    ParticleSystemComp->Activate();
                 }
             }
 
@@ -1790,7 +1801,7 @@ void PropertyEditorPanel::DrawParticlesPreviewButton(UParticleSystem* ParticleSy
         else
         {
             TestComp->Activate();
-            EditorEngine->GetParticlePreviewUI()->CreateEmptyParticleSystem(nullptr);
+            EditorEngine->GetParticlePreviewUI()->CreateEmptyParticleSystem(TestComp);
         }
     }
     ImGui::SameLine();
@@ -1806,7 +1817,7 @@ void PropertyEditorPanel::DrawParticlesPreviewButton(UParticleSystem* ParticleSy
 
         AActor* TestActor = World->SpawnActor<AActor>();
         UParticleSystemComponent* TestComp = TestActor->AddComponent<UParticleSystemComponent>(EComponentOrigin::Runtime);
-        EditorEngine->GetParticlePreviewUI()->CreateEmptyParticleSystem(nullptr);
+        EditorEngine->GetParticlePreviewUI()->CreateEmptyParticleSystem(TestComp);
         TestComp->Activate();
     }
 }

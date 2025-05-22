@@ -81,7 +81,7 @@ void ParticlesMenuBar::Render()
             {
                 //_itoa_s(num++, buf, 10);
                 //Particles.Add(FString(buf)); // Add new tab
-                UI->CreateEmptyParticleSystem();
+                UI->CreateEmptyParticleSystem(UI->Component);
             }
 
             for (int n = 0; n < ParticleSystems.Num(); n++)

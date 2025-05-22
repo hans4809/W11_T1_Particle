@@ -30,7 +30,7 @@ public:
     TArray<UParticleSystem*> GetParticleSystems() const { return ParticleSystems; }
     TArray<UParticleSystem*>& GetParticleSystemsRef() { return ParticleSystems; }
 
-    void CreateEmptyParticleSystem(UObject* InOuter = nullptr);
+    void CreateEmptyParticleSystem(UParticleSystemComponent* Component);
     void AddParticleSytstem(UParticleSystemComponent* Component, UParticleSystem* ParticleSystem);
     int32 RemoveParticleSystem(UParticleSystem* ParticleSystem);
     void RemoveParticleSystemAt(int32 Index);
