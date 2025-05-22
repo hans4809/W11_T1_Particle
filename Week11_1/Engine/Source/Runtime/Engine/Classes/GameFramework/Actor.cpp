@@ -224,7 +224,8 @@ UActorComponent* AActor::AddComponentByClass(UClass* ComponentClass, EComponentO
     }
 
     NewComponent->ComponentOrigin = Origin;
-    NewComponent->InitializeComponent();
+    NewComponent->RegisterComponent();
+    //NewComponent->InitializeComponent();
 
     return NewComponent;
 }
@@ -278,7 +279,8 @@ UActorComponent* AActor::AddComponent(UClass* InClass, FName InName, bool bTryRo
         if (!Component->HasBeenInitialized())
         {
             // TODO: RegisterComponent() 생기면 제거
-            Component->InitializeComponent();
+            Component->RegisterComponent();
+            //Component->InitializeComponent();
         }
 
         return Component;

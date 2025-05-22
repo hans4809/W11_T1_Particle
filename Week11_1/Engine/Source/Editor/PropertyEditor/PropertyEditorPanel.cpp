@@ -26,6 +26,8 @@
 #include "Components/PrimitiveComponents/MeshComponents/StaticMeshComponents/CubeComp.h"
 #include "Components/PrimitiveComponents/Physics/USphereShapeComponent.h"
 #include "Components/PrimitiveComponents/ParticleSystemComponent.h"
+#include "Classes/Particles/ParticleEmitter.h"
+#include "Classes/Particles/Modules/ParticleModule.h"
 
 #include "LevelEditor/SLevelEditor.h"
 
@@ -1373,6 +1375,16 @@ void PropertyEditorPanel::RenderForParticleSystem(UParticleSystemComponent* Part
                 if (ImGui::Selectable(GetData(System.Key.ToString()), false))
                 {
                     ParticleSystemComp->Template = System.Value;
+                    for (auto& emitter : ParticleSystemComp->Template->Emitters)
+                    {
+                        for (auto& lodLevel : emitter->LODLevels)
+                        {
+                            for (auto& Module : lodLevel->Modules)
+                            {
+                                Module->InitializeDefaults();
+                            }
+                        }
+                    }
                     ParticleSystemComp->ForceReset();
                     ParticleSystemComp->Activate();
                 }
