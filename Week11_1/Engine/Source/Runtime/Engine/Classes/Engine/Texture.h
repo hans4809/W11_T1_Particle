@@ -1,8 +1,5 @@
 #pragma once
 #include "Asset/Asset.h"
-#include "D3D11RHI/GraphicDevice.h"
-#include "container/String.h"
-#include "HAL/PlatformType.h"
 
 class UTexture : public UAsset
 {
@@ -31,9 +28,11 @@ public:
     bool SerializeToFile(std::ostream& Out) override;
     bool DeserializeFromFile(std::istream& In) override;
 
-    ID3D11ShaderResourceView* TextureSRV = nullptr;
-    ID3D11Texture2D* Texture = nullptr;
-    FString Path;
+    class ID3D11ShaderResourceView* TextureSRV = nullptr;
+    class ID3D11Texture2D* Texture = nullptr;
+
+    UPROPERTY(EditAnywhere, FString, Path, = TEXT(""))
+    
     uint32 Width;
     uint32 Height;
 };

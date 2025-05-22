@@ -10,7 +10,6 @@
 #include "LevelEditor/SLevelEditor.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/VBIBTopologyMapping.h"
-#include "UnrealEd/EditorPlayer.h"
 #include "UnrealEd/EditorViewportClient.h"
 #include "UObject/ObjectTypes.h"
 #include "UObject/UObjectIterator.h"

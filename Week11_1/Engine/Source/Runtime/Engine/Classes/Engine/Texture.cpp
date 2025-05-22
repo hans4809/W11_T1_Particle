@@ -3,7 +3,6 @@
 #include <wincodec.h>
 
 #include "DDSTextureLoader.h"
-#include "FEditorStateManager.h"
 #include "LaunchEngineLoop.h"
 
 bool UTexture::LoadFromFile(const FString& InFilepath)
