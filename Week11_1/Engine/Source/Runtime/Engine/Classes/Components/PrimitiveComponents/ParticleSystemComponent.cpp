@@ -627,6 +627,17 @@ void UParticleSystemComponent::ClearDynamicData()
 
 }
 
+void UParticleSystemComponent::DestroyComponent()
+{
+    Super::DestroyComponent();
+}
+
+void UParticleSystemComponent::EndPlay(EEndPlayReason::Type EndPlayReason)
+{
+    UPrimitiveComponent::EndPlay(EndPlayReason);
+    GetWorldManager()->UnregisterComponent(this);
+}
+
 void UParticleSystemComponent::InitParticles()
 {
     if (Template != nullptr)

@@ -5,7 +5,8 @@ namespace ParticleModuleDefaults
 {
     struct Required
     {
-        static const FWString TexturePath;
+        static const FString TexturePath;
+        static const FString TextureName;
         static const FVector EmitterOrigin;
         static const FRotator EmitterRotation;
         static constexpr float EmitterDuration = 1.0f;

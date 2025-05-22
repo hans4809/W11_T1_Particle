@@ -103,22 +103,22 @@ struct FObjMaterialInfo
 
     /* Texture */
     FString DiffuseTextureName;  // map_Kd : Diffuse texture
-    FWString DiffuseTexturePath;
+    FString DiffuseTexturePath;
     
     FString AmbientTextureName;  // map_Ka : Ambient texture
-    FWString AmbientTexturePath;
+    FString AmbientTexturePath;
     
     FString SpecularTextureName; // map_Ks : Specular texture
-    FWString SpecularTexturePath;
+    FString SpecularTexturePath;
     
     FString BumpTextureName;     // map_Bump : Bump texture
-    FWString BumpTexturePath;
+    FString BumpTexturePath;
     
     FString AlphaTextureName;    // map_d : Alpha texture
-    FWString AlphaTexturePath;
+    FString AlphaTexturePath;
 
     FString NormalTextureName;  // map_Ns : Normal Texture
-    FWString NormalTexturePath;
+    FString NormalTexturePath;
 
     float NormalScale = 1.0f;
 

@@ -1,6 +1,8 @@
 #include "Serializer.h"
 
+#include "Engine/Asset/Asset.h"
 #include "Serialization/MemoryArchive.h"
+#include "UObject/Casts.h"
 #include "UObject/ObjectFactory.h"
 
 void Serializer::Save(FArchive2& Ar, const UObject* Obj)
@@ -33,9 +35,14 @@ UObject* Serializer::Load(FArchive2& Ar)
     {
         return nullptr;
     }
-        
+    
     UObject* Obj = FObjectFactory::ConstructObject(C, nullptr);
     Obj->Serialize(Ar);
+    if (UAsset* Asset = Cast<UAsset>(Obj))
+    {
+        // TODO : 임시 코드임 수정해야댐
+        Asset->LoadFromFile(Asset->GetDescriptor().AbsolutePath);
+    }
     return Obj;
 }
 

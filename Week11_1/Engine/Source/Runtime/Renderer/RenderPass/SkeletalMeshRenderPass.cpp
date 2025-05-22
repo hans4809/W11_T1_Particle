@@ -20,6 +20,7 @@
 #include "Components/Mesh/StaticMesh.h"
 #include "Components/PrimitiveComponents/MeshComponents/SkeletalMeshComponent.h"
 #include "Components/PrimitiveComponents/MeshComponents/StaticMeshComponents/SkySphereComponent.h"
+#include "Engine/Asset/AssetManager.h"
 #include "Skeletal/SkeletalDefine.h"
 #include "LevelEditor/SLevelEditor.h"
 #include "Renderer/ComputeShader/ComputeTileLightCulling.h"
@@ -391,12 +392,19 @@ void FSkeletalMeshRenderPass::UpdateMaterialConstants(const FObjMaterialInfo& Ma
     MaterialConstants.bHasNormalTexture  = false;
     //normalScale값 있는데 parse만 하고 constant로 넘기고 있진 않음
 
-    auto DiffuseTexture  = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
-    auto AmbientTexture  = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.AmbientTexturePath);
-    auto SpecularTexture = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.SpecularTexturePath);
-    auto BumpTexture     = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.BumpTexturePath);
-    auto AlphaTexture    = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.AlphaTexturePath);
-    auto NormalTexture   = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.NormalTexturePath);
+    // auto DiffuseTexture  = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.DiffuseTexturePath);
+    // auto AmbientTexture  = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.AmbientTexturePath);
+    // auto SpecularTexture = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.SpecularTexturePath);
+    // auto BumpTexture     = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.BumpTexturePath);
+    // auto AlphaTexture    = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.AlphaTexturePath);
+    // auto NormalTexture   = FEngineLoop::ResourceManager.GetTexture(MaterialInfo.NormalTexturePath);
+
+    UTexture* DiffuseTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.DiffuseTextureName);
+    UTexture* AmbientTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.AlphaTextureName);
+    UTexture* SpecularTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.SpecularTextureName);
+    UTexture* BumpTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.BumpTextureName);
+    UTexture* AlphaTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.AlphaTextureName);
+    UTexture* NormalTexture = UAssetManager::Get().Get<UTexture>(MaterialInfo.NormalTextureName);
     
     ID3D11ShaderResourceView* srvs[6] = {
         DiffuseTexture  ? DiffuseTexture->TextureSRV  : defaultSRV,  // t0

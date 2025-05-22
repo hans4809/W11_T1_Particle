@@ -28,6 +28,7 @@
 #include "Components/Mesh/StaticMesh.h"
 
 #include "Contents/AGPlayer.h"
+#include "Engine/Asset/AssetManager.h"
 #include "Font/IconDefs.h"
 #include "ImGUI/imgui.h"
 #include "Renderer/Renderer.h"
@@ -537,7 +538,8 @@ void PreviewControlEditorPanel::CreateFlagButton() const
 
 void PreviewControlEditorPanel::CreateShaderHotReloadButton(const ImVec2 ButtonSize) const
 {
-    ID3D11ShaderResourceView* IconTextureSRV = GEngineLoop.ResourceManager.GetTexture(L"Assets/Texture/HotReload.png")->TextureSRV;
+    //ID3D11ShaderResourceView* IconTextureSRV = GEngineLoop.ResourceManager.GetTexture(L"Assets/Texture/HotReload.png")->TextureSRV;
+    ID3D11ShaderResourceView* IconTextureSRV = UAssetManager::Get().Get<UTexture>(TEXT("HotReload"))->TextureSRV;
     const ImTextureID textureID = reinterpret_cast<ImTextureID>(IconTextureSRV); // 실제 사용되는 텍스처 SRV
     if (ImGui::ImageButton("btn1", textureID, ButtonSize))
     {

@@ -3,10 +3,13 @@
 #include "Runtime/Engine/Particles/ParticleEmitterInstances.h"
 #include "LaunchEngineLoop.h"
 #include "ParticleModuleDefaults.h"
+#include "Engine/Asset/AssetManager.h"
+
 UParticleModuleRequired::UParticleModuleRequired()
 {
     // 초기값 지정
-    Texture = FEngineLoop::ResourceManager.GetTexture(ParticleModuleDefaults::Required::TexturePath);
+    //Texture = FEngineLoop::ResourceManager.GetTexture(ParticleModuleDefaults::Required::TexturePath);
+    Texture = UAssetManager::Get().Get<UTexture>(ParticleModuleDefaults::Required::TextureName);
     EmitterOrigin = ParticleModuleDefaults::Required::EmitterOrigin;
     // TODO : rotation 테스트 필요.
     EmitterRotation = ParticleModuleDefaults::Required::EmitterRotation;

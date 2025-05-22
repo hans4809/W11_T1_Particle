@@ -28,7 +28,7 @@ UAssetImporter::~UAssetImporter()
 {
 }
 
-void UAssetImporter::Import(const FString& InFilepath, ImportCallback InCallback)
+void UAssetImporter::Import(const FString& InFilepath, const ImportCallback& InCallback)
 {
     auto factory = FindFactory(InFilepath);
     if (!factory) return;
@@ -40,8 +40,8 @@ void UAssetImporter::Import(const FString& InFilepath, ImportCallback InCallback
     // 에셋 식별자
     desc.AssetName = FName(filePath.stem().string());
     
-    // 경로 정보
-    desc.AbsolutePath  = filePath.string();
+    // ② 절대경로 (OS 구분자와 상관없이)
+    desc.AbsolutePath  = FString(filePath.generic_wstring().c_str());
     desc.RelativePath  = std::filesystem::relative(filePath, std::filesystem::current_path()).string();
     
     // 확장자
@@ -56,13 +56,13 @@ void UAssetImporter::Import(const FString& InFilepath, ImportCallback InCallback
     if (desc.AssetExtension == ".ttalkak")
     {
         // .uasset: Serializer로 직접 로드
-        UObject* root = Serializer::LoadFromFile(filePath);
+        UObject* root = Serializer::LoadFromFile(desc.AbsolutePath);
         asset = Cast<UAsset>(root);
     }
     else
     {
         // 그 외: 팩토리 임포트
-        asset = factory->ImportFromFile(InFilepath);
+        asset = factory->ImportFromFile(desc.AbsolutePath);
     }
 
     if (asset)
@@ -77,7 +77,7 @@ void UAssetImporter::Import(const FString& InFilepath, ImportCallback InCallback
     }
 }
 
-void UAssetImporter::ImportDirectory(const FString& InDir, const ImportSettings& InSettings, ImportCallback InCallback)
+void UAssetImporter::ImportDirectory(const FString& InDir, const ImportCallback& InCallback)
 {
     for (auto& p : std::filesystem::recursive_directory_iterator(InDir))
     {

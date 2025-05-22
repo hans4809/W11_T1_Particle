@@ -130,9 +130,7 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
 
                 NewEmitter->LODLevels.Add(NewLODLevel);
                 TestParticleSystem->Emitters.Add(NewEmitter);
-
-                TestComp->Template = TestParticleSystem;
-
+                
                 UParticleEmitter* NewEmitter2 = FObjectFactory::ConstructObject<UParticleSpriteEmitter>(nullptr);
                 UParticleLODLevel* NewLODLevel2 = FObjectFactory::ConstructObject<UParticleLODLevel>(nullptr);
 
@@ -147,9 +145,9 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                 NewLODLevel2->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleColor>(nullptr));
 
                 NewEmitter2->LODLevels.Add(NewLODLevel2);
-                TestComp->Template->Emitters.Add(NewEmitter2);
+                TestParticleSystem->Emitters.Add(NewEmitter2);
             }
-
+            TestComp->Template = TestParticleSystem;
             
             for (auto& emitter : TestParticleSystem->Emitters)
             {

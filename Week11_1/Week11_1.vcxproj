@@ -253,7 +253,9 @@ xcopy /y /d "$(ProjectDir)Engine\Source\ThirdParty\FBX_SDK\2020.3.7\lib\x64\$(Co
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\AssetImporter.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\AssetRegistry.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\Particle\ParticleSystemFactory.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\Texture\TextureFactory.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\FBXLoader.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Texture.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Character.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Controller.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Pawn.cpp" />
@@ -549,6 +551,7 @@ xcopy /y /d "$(ProjectDir)Engine\Source\ThirdParty\FBX_SDK\2020.3.7\lib\x64\$(Co
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\AssetImporter.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\AssetRegistry.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\Particle\ParticleSystemFactory.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Asset\Texture\TextureFactory.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\FBXLoader.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Character.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Controller.h" />

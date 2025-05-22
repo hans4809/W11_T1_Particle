@@ -1,6 +1,7 @@
 #include "FLoaderOBJ.h"
 
 #include "LaunchEngineLoop.h"
+#include "Asset/AssetManager.h"
 #include "UObject/ObjectFactory.h"
 #include "Components/Material/Material.h"
 #include "Components/Mesh/StaticMesh.h"
@@ -286,9 +287,9 @@ bool FLoaderOBJ::ParseMaterial(FObjInfo& OutObjInfo, OBJ::FStaticMeshRenderData&
         {
             LineStream >> Line;
             
-            OutFStaticMesh.Materials[MaterialIndex].DiffuseTextureName = Line;
+            OutFStaticMesh.Materials[MaterialIndex].DiffuseTextureName = std::filesystem::path(Line).stem().string();
 
-            FWString TexturePath = OutObjInfo.PathName + OutFStaticMesh.Materials[MaterialIndex].DiffuseTextureName.ToWideString();
+            FString TexturePath = OutObjInfo.PathName + OutFStaticMesh.Materials[MaterialIndex].DiffuseTextureName.ToWideString();
             OutFStaticMesh.Materials[MaterialIndex].DiffuseTexturePath = TexturePath;
             OutFStaticMesh.Materials[MaterialIndex].bHasTexture = true;
 
@@ -308,9 +309,9 @@ bool FLoaderOBJ::ParseMaterial(FObjInfo& OutObjInfo, OBJ::FStaticMeshRenderData&
                 LineStream >> Line;
             }
 
-            OutFStaticMesh.Materials[MaterialIndex].NormalTextureName = Line;
+            OutFStaticMesh.Materials[MaterialIndex].NormalTextureName = std::filesystem::path(Line).filename().string();
             
-            FWString TexturePath = OutObjInfo.PathName + OutFStaticMesh.Materials[MaterialIndex].NormalTextureName.ToWideString();
+            FString TexturePath = OutObjInfo.PathName + OutFStaticMesh.Materials[MaterialIndex].NormalTextureName.ToWideString();
             OutFStaticMesh.Materials[MaterialIndex].NormalTexturePath = TexturePath;
             OutFStaticMesh.Materials[MaterialIndex].bHasTexture = true;
 
@@ -442,20 +443,17 @@ bool FLoaderOBJ::ConvertToStaticMesh(const FObjInfo& RawData, OBJ::FStaticMeshRe
     return true;
 }
 
-bool FLoaderOBJ::CreateTextureFromFile(const FWString& Filename)
+bool FLoaderOBJ::CreateTextureFromFile(const FString& FilePath)
 {
-    if (GEngineLoop.ResourceManager.GetTexture(Filename))
-    {
-        return true;
-    }
+    std::filesystem::path filePath(FilePath);
+    
+    FString AssetName = FString(filePath.stem().string());
+    UTexture* NewTexture = UAssetManager::Get().Get<UTexture>(AssetName);
 
-    HRESULT hr = GEngineLoop.ResourceManager.LoadTextureFromFile(GEngineLoop.GraphicDevice.Device, GEngineLoop.GraphicDevice.DeviceContext, Filename.c_str());
-
-    if (FAILED(hr))
+    if (NewTexture == nullptr)
     {
         return false;
     }
-
     return true;
 }
 
@@ -570,7 +568,7 @@ bool FManagerOBJ::LoadStaticMeshFromBinary(const FWString& FilePath, OBJ::FStati
         return false;
     }
 
-    TArray<FWString> Textures;
+    TArray<FString> Textures;
 
     // Object Name
     Serializer::ReadFWString(File, OutStaticMesh.ObjectName);
@@ -611,40 +609,40 @@ bool FManagerOBJ::LoadStaticMeshFromBinary(const FWString& FilePath, OBJ::FStati
         File.read(reinterpret_cast<char*>(&Material.TransparencyScalar), sizeof(Material.TransparencyScalar));
         File.read(reinterpret_cast<char*>(&Material.IlluminanceModel), sizeof(Material.IlluminanceModel));
         Serializer::ReadFString(File, Material.DiffuseTextureName);
-        Serializer::ReadFWString(File, Material.DiffuseTexturePath);
+        Serializer::ReadFString(File, Material.DiffuseTexturePath);
         Serializer::ReadFString(File, Material.AmbientTextureName);
-        Serializer::ReadFWString(File, Material.AmbientTexturePath);
+        Serializer::ReadFString(File, Material.AmbientTexturePath);
         Serializer::ReadFString(File, Material.SpecularTextureName);
-        Serializer::ReadFWString(File, Material.SpecularTexturePath);
+        Serializer::ReadFString(File, Material.SpecularTexturePath);
         Serializer::ReadFString(File, Material.BumpTextureName);
-        Serializer::ReadFWString(File, Material.BumpTexturePath);
+        Serializer::ReadFString(File, Material.BumpTexturePath);
         Serializer::ReadFString(File, Material.AlphaTextureName);
-        Serializer::ReadFWString(File, Material.AlphaTexturePath);
+        Serializer::ReadFString(File, Material.AlphaTexturePath);
         Serializer::ReadFString(File, Material.NormalTextureName);
-        Serializer::ReadFWString(File, Material.NormalTexturePath);
+        Serializer::ReadFString(File, Material.NormalTexturePath);
 
         
-        if (!Material.DiffuseTexturePath.empty())
+        if (!Material.DiffuseTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.DiffuseTexturePath);
         }
-        if (!Material.AmbientTexturePath.empty())
+        if (!Material.AmbientTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.AmbientTexturePath);
         }
-        if (!Material.SpecularTexturePath.empty())
+        if (!Material.SpecularTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.SpecularTexturePath);
         }
-        if (!Material.BumpTexturePath.empty())
+        if (!Material.BumpTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.BumpTexturePath);
         }
-        if (!Material.AlphaTexturePath.empty())
+        if (!Material.AlphaTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.AlphaTexturePath);
         }
-        if (!Material.NormalTexturePath.empty())
+        if (!Material.NormalTexturePath.IsEmpty())
         {
             Textures.AddUnique(Material.NormalTexturePath);
         }
@@ -671,12 +669,12 @@ bool FManagerOBJ::LoadStaticMeshFromBinary(const FWString& FilePath, OBJ::FStati
     // Texture Load
     if (Textures.Num() > 0)
     {
-        for (const FWString& Texture : Textures)
+        for (const FString& Texture : Textures)
         {
-            if (GEngineLoop.ResourceManager.GetTexture(Texture) == nullptr)
-            {
-                GEngineLoop.ResourceManager.LoadTextureFromFile(GEngineLoop.GraphicDevice.Device, GEngineLoop.GraphicDevice.DeviceContext, Texture.c_str());
-            }
+            // if (GEngineLoop.ResourceManager.GetTexture(Texture) == nullptr)
+            // {
+            //     GEngineLoop.ResourceManager.LoadTextureFromFile(GEngineLoop.GraphicDevice.Device, GEngineLoop.GraphicDevice.DeviceContext, Texture.c_str());
+            // }
         }
     }
     
@@ -805,17 +803,17 @@ bool FManagerOBJ::SaveStaticMeshToBinary(const FWString& FilePath, const OBJ::FS
         File.write(reinterpret_cast<const char*>(&Material.IlluminanceModel), sizeof(Material.IlluminanceModel));
 
         Serializer::WriteFString(File, Material.DiffuseTextureName);
-        Serializer::WriteFWString(File, Material.DiffuseTexturePath);
+        Serializer::WriteFString(File, Material.DiffuseTexturePath);
         Serializer::WriteFString(File, Material.AmbientTextureName);
-        Serializer::WriteFWString(File, Material.AmbientTexturePath);
+        Serializer::WriteFString(File, Material.AmbientTexturePath);
         Serializer::WriteFString(File, Material.SpecularTextureName);
-        Serializer::WriteFWString(File, Material.SpecularTexturePath);
+        Serializer::WriteFString(File, Material.SpecularTexturePath);
         Serializer::WriteFString(File, Material.BumpTextureName);
-        Serializer::WriteFWString(File, Material.BumpTexturePath);
+        Serializer::WriteFString(File, Material.BumpTexturePath);
         Serializer::WriteFString(File, Material.AlphaTextureName);
-        Serializer::WriteFWString(File, Material.AlphaTexturePath);
+        Serializer::WriteFString(File, Material.AlphaTexturePath);
         Serializer::WriteFString(File, Material.NormalTextureName);
-        Serializer::WriteFWString(File, Material.NormalTexturePath);
+        Serializer::WriteFString(File, Material.NormalTexturePath);
 
     }
 

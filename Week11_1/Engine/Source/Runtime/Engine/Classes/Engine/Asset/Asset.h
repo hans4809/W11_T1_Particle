@@ -13,12 +13,13 @@ enum class EAssetType : uint8
 
 struct FAssetDescriptor 
 {
-    FName AssetName;                             // 에셋 식별자
-    FString RelativePath;                        // 상대 경로
-    FString AbsolutePath;                        // 절대 경로
-    FString AssetExtension;                      // 에셋 타입명(예: "Texture", "Mesh")
-    
-    size_t Size = 0;                           // 파일 크기 또는 메모리 사용량 (바이트 단위)
+    DECLARE_STRUCT(FAssetDescriptor)
+
+    UPROPERTY(EditAnywhere, FName, AssetName, = NAME_None) // 에셋 식별자
+    UPROPERTY(EditAnywhere, FString, RelativePath, = TEXT("")) // 상대 경로
+    UPROPERTY(EditAnywhere, FString, AbsolutePath, = TEXT("")) // 절대 경로
+    UPROPERTY(EditAnywhere, FString, AssetExtension, = TEXT("")) // 에셋 타입명(예: "Texture", "Mesh")
+    UPROPERTY(EditAnywhere, size_t, Size, = 0) // 파일 크기 또는 메모리 사용량 (바이트 단위)
     std::filesystem::file_time_type CreateDate;                // 생성 타임스탬프 (Unix epoch)
     std::filesystem::file_time_type UpdateDate;                // 수정 타임스탬프
 
@@ -38,5 +39,5 @@ public:
     virtual bool SerializeToFile(std::ostream& Out) = 0;
     virtual bool DeserializeFromFile(std::istream& In) = 0;
 protected:
-    FAssetDescriptor Descriptor = {};
+    UPROPERTY(EditAnywhere,FAssetDescriptor, Descriptor, = {})
 };

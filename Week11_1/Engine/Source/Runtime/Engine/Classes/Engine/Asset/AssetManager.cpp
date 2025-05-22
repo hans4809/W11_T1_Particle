@@ -11,6 +11,22 @@
 
 extern UEngine* GEngine;
 
+UAssetManager::~UAssetManager()
+{
+    for (auto factory : Factories)
+    {
+        UnregisterFactory(factory);
+        factory->MarkAsGarbage();
+    }
+
+    for (auto asset : LoadedAssets)
+    {
+        asset.Value->MarkAsGarbage();
+    }
+
+    Registry->MarkAsGarbage();
+}
+
 bool UAssetManager::IsInitialized()
 {
     return GEngine && GEngine->AssetManager;
@@ -39,13 +55,14 @@ void UAssetManager::Initalize()
 {
     Registry = FObjectFactory::ConstructObject<UAssetRegistry>(this);
     Registry->ScanDirectory();
+    Registry->ScanDirectory(TEXT("Assets"));
+    
+    LoadObjFiles();
 }
 
 void UAssetManager::InitAssetManager()
 {
     AssetRegistry = std::make_unique<FAssetRegistry>();
-
-    LoadObjFiles();
 }
 
 const TMap<FName, FAssetInfo>& UAssetManager::GetAssetRegistry() const

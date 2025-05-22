@@ -34,6 +34,7 @@ private:
 
 public:
     UAssetManager() = default;
+    ~UAssetManager();
 
     static bool IsInitialized();
 
@@ -162,5 +163,10 @@ T* UAssetManager::Get(const FString& InName)
         return nullptr;
 
     // 2) Load 에 모든 캐시 검사+로드 로직 위임
-    return Load<T>(desc.AbsolutePath);
+    T* Asset = Load<T>(desc.AbsolutePath);
+    if (Asset)
+    {
+        Asset->GetDescriptor() = desc;
+    }
+    return Asset;
 }

@@ -25,13 +25,13 @@ void UAssetRegistry::ScanDirectory(const FString& InDir)
         FAssetDescriptor desc;
 
         // ② 절대경로 (OS 구분자와 상관없이)
-        desc.AbsolutePath = FString(filePath.generic_wstring().c_str());
+        desc.AbsolutePath = FString(filePath.generic_wstring());
 
         // ③ baseDir 대비 상대경로 (항상 '/' 로만 구성)
-        fs::path rel = fs::relative(filePath, baseDir);
-        desc.RelativePath = FString(rel.generic_string().c_str());
+        fs::path rel = fs::relative(filePath, std::filesystem::current_path());
+        desc.RelativePath = FString(rel.generic_wstring());
 
-        desc.AssetName      = FString(rel.stem().string().c_str());
+        desc.AssetName      = FString(rel.stem().string());
         desc.AssetExtension = rel.extension().string();
         desc.Size           = fs::file_size(filePath);
         desc.CreateDate     = fs::last_write_time(filePath);
