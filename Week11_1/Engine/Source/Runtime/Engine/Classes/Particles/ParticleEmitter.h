@@ -18,7 +18,7 @@ class UParticleEmitter : public UObject
     DECLARE_CLASS(UParticleEmitter, UObject)
 public:
     UParticleEmitter() = default;
-    UPROPERTY(EditAnywhere, FName, EmitterName, = NAME_None)
+    UPROPERTY(EditAnywhere, FName, EmitterName, = TEXT("None"))
 
     UPROPERTY(EditAnywhere, FColor, EditorColor, = FColor())
 

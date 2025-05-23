@@ -7,6 +7,8 @@
 #include "Math/NumericLimits.h"
 #include "Template/SubclassOf.h"
 #include "CoreUObject/UObject/ObjectUtils.h"
+#include "Engine/Asset/Asset.h"
+#include "Engine/Asset/AssetManager.h"
 
 #include "ImGui/imgui.h"
 #include "Serialization/Archive2.h"
@@ -194,16 +196,15 @@ void FStrProperty::Serialize(FArchive2& Ar, void* DataPtr) const
     {
         int32 Len = Str.Len();
         Ar.SerializeRaw(&Len, sizeof(Len));
-        Ar.SerializeRaw(const_cast<TCHAR*>(*Str), Len  * sizeof(TCHAR));
+        Ar.SerializeRaw(GetData(Str), (Len)  * sizeof(TCHAR));
     }
     else
     {
         int32 Len = 0;
         Ar.SerializeRaw(&Len, sizeof(Len));
-        TArray<TCHAR> Buffer;
-        Buffer.SetNum(Len + 1);
-        Ar.SerializeRaw(Buffer.GetData(), Len * sizeof(TCHAR));
-        Str = FString(Buffer.GetData());
+        FString Buffer;
+        Buffer.Resize(Len);
+        Ar.SerializeRaw(GetData(Buffer), (Len) * sizeof(TCHAR));
     }
 }
 
@@ -238,7 +239,7 @@ void FNameProperty::Serialize(FArchive2& Ar, void* DataPtr) const
         // 2) 길이 저장
         Ar.SerializeRaw(&Len, sizeof(Len));
         // 3) 문자열(TCHAR) 저장 (널종료 포함)
-        Ar.SerializeRaw(const_cast<TCHAR*>(*Str), Len * sizeof(TCHAR));
+        Ar.SerializeRaw(GetData(Str), (Len) * sizeof(TCHAR));
     }
     else // Loading
     {
@@ -247,13 +248,11 @@ void FNameProperty::Serialize(FArchive2& Ar, void* DataPtr) const
         Ar.SerializeRaw(&Len, sizeof(Len));
 
         // 2) 버퍼 할당 후 문자열 읽기
-        TArray<TCHAR> Buffer;
-        Buffer.SetNum(Len + 1);
-        Ar.SerializeRaw(Buffer.GetData(), Len  * sizeof(TCHAR));
-
-        // 3) FString → FName 으로 복원
-        FString Str(Buffer.GetData());
-        NameVal = FName(Str);
+        FString Buffer;
+        Buffer.Resize(Len);
+        Ar.SerializeRaw(GetData(Buffer), (Len)  * sizeof(TCHAR));
+        
+        NameVal = Buffer;
     }
 }
 
@@ -624,10 +623,10 @@ void FSubclassOfProperty::Serialize(FArchive2& Ar, void* DataPtr) const
         Ar.SerializeRaw(&bHas, sizeof(bHas));
         if (bHas)
         {
-            FString Name = ClassRef->GetName();
-            int32 Len = Name.Len();
+            FString ClassName = ClassRef->GetName();
+            int32 Len = ClassName.Len();
             Ar.SerializeRaw(&Len, sizeof(Len));
-            Ar.SerializeRaw(const_cast<TCHAR*>(*Name), (Len + 1) * sizeof(TCHAR));
+            Ar.SerializeRaw(GetData(ClassName), (Len) * sizeof(TCHAR));
         }
     }
     else
@@ -638,11 +637,10 @@ void FSubclassOfProperty::Serialize(FArchive2& Ar, void* DataPtr) const
         {
             int32 Len = 0;
             Ar.SerializeRaw(&Len, sizeof(Len));
-            TArray<TCHAR> Buffer;
-            Buffer.SetNum(Len + 1);
-            Ar.SerializeRaw(Buffer.GetData(), (Len + 1) * sizeof(TCHAR));
-            FString Name(Buffer.GetData());
-            ClassRef = UClass::FindClass(FName(Name));
+            FString Buffer;
+            Buffer.Resize(Len);
+            Ar.SerializeRaw(GetData(Buffer), (Len) * sizeof(TCHAR));
+            ClassRef = UClass::FindClass(FName(Buffer));
         }
         else
         {
@@ -726,6 +724,107 @@ void FObjectProperty::Serialize(FArchive2& Ar, void* DataPtr) const
         else
         {
             Ref = nullptr;
+        }
+    }
+}
+
+void FAssetProperty::DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const
+{
+    FProperty::DisplayRawDataInImGui(PropertyLabel, DataPtr);
+
+    // 실제 UAsset* 포인터를 꺼냄
+    UAsset** AssetPtr = static_cast<UAsset**>(DataPtr);
+    UAsset* Asset = AssetPtr ? *AssetPtr : nullptr;
+
+    if (!Asset)
+    {
+        ImGui::TextDisabled("Null Asset");
+        return;
+    }
+    
+    // 트리 노드 열기
+    if (ImGui::TreeNode(PropertyLabel))
+    {
+        auto& Desc = Asset->GetDescriptor();
+
+        // AssetName
+        ImGui::Text("AssetName: %s", *Desc.AssetName.ToString());
+        
+        ImGui::Separator();
+
+        // --- 4) 콤보박스로 에셋 변경 기능 추가 ---
+        {
+            // 레지스트리에서 모든 에셋 정보 가져오기
+            const auto& RegisterDescriptors = UAssetManager::Get().GetDescriptorsByType(Asset->GetClass());
+
+            // 현재 선택된 에셋 라벨 (경로 기준)
+            const char* current = *Desc.RelativePath;
+
+            if (ImGui::BeginCombo("##AssetSelector", current))
+            {
+                for (const auto& Descriptor : RegisterDescriptors)
+                {
+                    const FAssetDescriptor& Info = Descriptor;
+                    // 화면에 보일 라벨: "패키지경로/에셋이름"
+                    std::string label = std::format("{}", *Info.RelativePath);
+
+                    bool isSelected = (Info.AssetName == Desc.AssetName);
+                    if (ImGui::Selectable(label.c_str(), isSelected))
+                    {
+                        // 선택된 에셋 로드
+                        if (UObject* Loaded = UAssetManager::Get().Get(Asset->GetClass(), Info.AssetName.ToString()))
+                        {
+                            if (UAsset* NewAsset = Cast<UAsset>(Loaded))
+                            {
+                                *AssetPtr = NewAsset;
+                                Desc = NewAsset->GetDescriptor();
+                            }
+                        }
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+        }
+
+        ImGui::TreePop();
+    }
+}
+
+void FAssetProperty::Serialize(FArchive2& Ar, void* DataPtr) const
+{
+    // DataPtr은 UAsset* 포인터를 저장하는 메모리
+    UAsset*& AssetPtr = *reinterpret_cast<UAsset**>(DataPtr);
+
+    if (Ar.IsSaving())
+    {
+        // 에셋이 있을 때만 경로 저장
+        FString AssetName = AssetPtr ? AssetPtr->GetDescriptor().AssetName.ToString() : TEXT("");
+        int32 NameLen = AssetName.Len();
+        Ar.SerializeRaw(&NameLen, sizeof(NameLen));
+        Ar.SerializeRaw(const_cast<TCHAR*>(*AssetName), (NameLen) * sizeof(TCHAR));
+    }
+    else  // 로드
+    {
+        // 1) 이름 길이 읽기
+        int32 NameLen = 0;
+        Ar.SerializeRaw(&NameLen, sizeof(NameLen));
+
+        // 2) 그 길이만큼 버퍼 할당 후 읽기
+        FString AssetNameBuf;
+        AssetNameBuf.Resize(NameLen);
+        Ar.SerializeRaw(GetData(AssetNameBuf), (NameLen) * sizeof(TCHAR));
+        
+        if (!AssetNameBuf.IsEmpty())
+        {
+            // 캐시 포함 로드
+            UAsset* Loaded = UAssetManager::Get().Get<UAsset>(AssetNameBuf);
+            AssetPtr = Loaded;
+        }
+        else
+        {
+            AssetPtr = nullptr;
         }
     }
 }

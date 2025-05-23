@@ -34,7 +34,7 @@ void ParticlesDetailsPanel::Render()
     ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     if (UParticleLODLevel* LODLevel = UI->GetSelectedLODLevel())
     {
-        TArray<UParticleModule*> Modules = LODLevel->Modules;
+        TArray<UParticleModule*>& Modules = LODLevel->Modules;
 
         int SelectedModuleIndex = UI->GetSelectedModuleIndex();
         if (SelectedModuleIndex >= 0 && SelectedModuleIndex < Modules.Num())

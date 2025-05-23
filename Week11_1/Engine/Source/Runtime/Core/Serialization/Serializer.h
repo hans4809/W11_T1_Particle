@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "Container/Array.h"
+#include "Container/Map.h"
 #include "Container/String.h"
 
 class FArchive2;

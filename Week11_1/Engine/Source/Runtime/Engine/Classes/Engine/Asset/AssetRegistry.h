@@ -21,6 +21,7 @@ public:
     // 등록된 에셋 검색
     bool GetDescriptor(const FName& InName, FAssetDescriptor& OutDesc) const;
 
+    TArray<FAssetDescriptor> GetDescriptorsByExtension(const FString& InExtension) const;
 private:
     TMap<FName, FAssetDescriptor> DescriptorMap;
 };

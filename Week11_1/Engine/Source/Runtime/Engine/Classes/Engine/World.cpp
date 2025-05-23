@@ -83,7 +83,7 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
         // TODO : Serialize Save/Load Test 코드 나중에 삭제해야댐
         //DummyTest::TestDummyObject2Serialization(GEngine);
         if(WorldType == EWorldType::Editor)
-       {
+        {
             AActor* TestActor = SpawnActor<AActor>();
             UParticleSystemComponent* TestComp = TestActor->AddComponent<UParticleSystemComponent>(EComponentOrigin::Runtime);
             // TODO : ParticleSystemAsset SaveLoad Test 코드
@@ -105,24 +105,6 @@ void UWorld::CreateBaseObject(EWorldType::Type WorldType)
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleVelocity>(nullptr));
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleLifeTime>(nullptr));
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleLocation>(nullptr));
-                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSize>(nullptr));
-                NewLODLevel->TypeDataModule = FObjectFactory::ConstructObject<UParticleModuleTypeDataMesh>(nullptr);
-                dynamic_cast<UParticleModuleTypeDataMesh*>(NewLODLevel->TypeDataModule)->Mesh = FManagerOBJ::CreateStaticMesh(L"Assets/apple_mid.obj");
-                NewLODLevel->Modules.Add(NewLODLevel->TypeDataModule);
-
-                NewEmitter->LODLevels.Add(NewLODLevel);
-                TestParticleSystem->Emitters.Add(NewEmitter);
-
-                NewEmitter = FObjectFactory::ConstructObject<UParticleSpriteEmitter>(nullptr);
-                NewLODLevel = FObjectFactory::ConstructObject<UParticleLODLevel>(nullptr);
-
-                NewLODLevel->RequiredModule = FObjectFactory::ConstructObject<UParticleModuleRequired>(nullptr);
-                NewLODLevel->Modules.Add(NewLODLevel->RequiredModule);
-                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSpawn>(nullptr));
-                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleVelocity>(nullptr));
-                NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleLifeTime>(nullptr));
-                Loc = FObjectFactory::ConstructObject<UParticleModuleLocation>(nullptr);
-                NewLODLevel->Modules.Add(Loc);
                 NewLODLevel->Modules.Add(FObjectFactory::ConstructObject<UParticleModuleSize>(nullptr));
                 NewLODLevel->TypeDataModule = FObjectFactory::ConstructObject<UParticleModuleTypeDataMesh>(nullptr);
                 dynamic_cast<UParticleModuleTypeDataMesh*>(NewLODLevel->TypeDataModule)->Mesh = FManagerOBJ::CreateStaticMesh(L"Assets/apple_mid.obj");

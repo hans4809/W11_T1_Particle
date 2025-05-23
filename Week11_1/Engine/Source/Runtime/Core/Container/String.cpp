@@ -3,6 +3,7 @@
 #include <cctype>
 
 #include "Math/MathUtility.h"
+#include "Misc/CoreMiscDefines.h"
 
 
 #if USE_WIDECHAR

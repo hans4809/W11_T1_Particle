@@ -11,7 +11,7 @@
 #include "ThirdParty/include/ImGUI/imgui.h"
 
 class UScriptStruct;
-struct FArchive2;
+class FArchive2;
 
 struct FProperty
 {
@@ -110,6 +110,7 @@ private:
             switch (Type)  // NOLINT(clang-diagnostic-switch-enum)
             {
                 // Type이 Object와 SubclassOf 일 때만 UClass*가 유효
+            case EPropertyType::Asset:
             case EPropertyType::Object:
             case EPropertyType::SubclassOf:
                 break;
@@ -1123,6 +1124,24 @@ struct FSubclassOfProperty : public FProperty
     void Serialize(FArchive2& Ar, void* DataPtr) const override;
 };
 
+struct FAssetProperty : public FProperty
+{
+    FAssetProperty(
+        UStruct* InOwnerStruct,
+        const char* InPropertyName,
+        int64 InSize,
+        int64 InOffset,
+        EPropertyFlags InFlags
+    )
+        : FProperty(InOwnerStruct, InPropertyName, EPropertyType::Asset, InSize, InOffset, InFlags)
+    {
+    }
+
+    virtual void DisplayRawDataInImGui(const char* PropertyLabel, void* DataPtr) const override;
+    
+    void Serialize(FArchive2& Ar, void* DataPtr) const override;
+};
+
 struct FObjectProperty : public FProperty
 {
     FObjectProperty(
@@ -1297,6 +1316,13 @@ namespace PropertyFactory::Private
                 // TSubclassOf에 UObject를 상속받은 클래스가 아닌 타입이 들어오면, 여기서 컴파일 에러가 날 수 있음
                 static_assert(TAlwaysFalse<T>, "TSubclassOf template parameter must inherit from UObject");
             }
+        }
+        else if constexpr (TypeEnum == EPropertyType::Asset)
+        {
+            using PointerType = std::remove_cvref_t<std::remove_pointer_t<T>>;
+            FProperty* Property = new FAssetProperty{ InOwnerStruct, InPropertyName, sizeof(T), InOffset, InFlags };
+            Property->TypeSpecificData = PointerType::StaticClass();
+            return Property;
         }
         else if constexpr (TypeEnum == EPropertyType::Object)
         {

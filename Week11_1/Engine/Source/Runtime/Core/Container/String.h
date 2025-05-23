@@ -7,7 +7,7 @@
 #include "Core/HAL/PlatformType.h"
 #include "Serialization/Archive.h"
 #include "StringConv.h"
-#include "Core/Misc/CoreMiscDefines.h"
+
 /*
 # TCHAR가 ANSICHAR인 경우
 1. const ANSICHAR* 로 FString 생성

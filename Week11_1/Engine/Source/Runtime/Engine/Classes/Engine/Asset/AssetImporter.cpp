@@ -38,7 +38,7 @@ void UAssetImporter::Import(const FString& InFilepath, const ImportCallback& InC
     std::filesystem::path filePath(InFilepath);
 
     // 에셋 식별자
-    desc.AssetName = FName(filePath.stem().string());
+    desc.AssetName = FName(FString(filePath.stem().string()));
     
     // ② 절대경로 (OS 구분자와 상관없이)
     desc.AbsolutePath  = FString(filePath.generic_wstring().c_str());

@@ -31,7 +31,7 @@ void UAssetRegistry::ScanDirectory(const FString& InDir)
         fs::path rel = fs::relative(filePath, std::filesystem::current_path());
         desc.RelativePath = FString(rel.generic_wstring());
 
-        desc.AssetName      = FString(rel.stem().string());
+        desc.AssetName      = FName(FString(rel.stem().string()));
         desc.AssetExtension = rel.extension().string();
         desc.Size           = fs::file_size(filePath);
         desc.CreateDate     = fs::last_write_time(filePath);
@@ -55,4 +55,21 @@ bool UAssetRegistry::GetDescriptor(const FName& InName, FAssetDescriptor& OutDes
         return true;
     }
     return false;
+}
+
+TArray<FAssetDescriptor> UAssetRegistry::GetDescriptorsByExtension(const FString& InExtension) const
+{
+    TArray<FAssetDescriptor> Results;
+    
+    for (const auto& Pair : DescriptorMap)
+    {
+        const FAssetDescriptor& Desc = Pair.Value;
+        // 대소문자 구분 없이 비교
+        if (Desc.AssetExtension.Equals(InExtension, ESearchCase::IgnoreCase))
+        {
+            Results.Add(Desc);
+        }
+    }
+
+    return Results;
 }

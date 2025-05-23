@@ -1,5 +1,6 @@
 #include "ParticleSystem.h"
 #include "Modules/ParticleModule.h"
+#include "Serialization/Serializer.h"
 
 UParticleSystem::UParticleSystem()
     : Super()
@@ -30,7 +31,7 @@ UParticleSystem::~UParticleSystem()
 
 bool UParticleSystem::LoadFromFile(const FString& filepath)
 {
-    return true;
+    return Serializer::LoadFromFile(filepath);
 }
 
 bool UParticleSystem::SerializeToFile(std::ostream& Out)

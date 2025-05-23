@@ -5,6 +5,7 @@
 #include "AssetFactory.h"
 #include "AssetRegistry.h"
 #include "Engine/FLoaderOBJ.h"
+#include "Engine/Texture.h"
 #include "Particles/ParticleSystem.h"
 #include "Serialization/MemoryArchive.h"
 #include "UObject/Casts.h"
@@ -63,11 +64,6 @@ void UAssetManager::Initalize()
 void UAssetManager::InitAssetManager()
 {
     AssetRegistry = std::make_unique<FAssetRegistry>();
-}
-
-const TMap<FName, FAssetInfo>& UAssetManager::GetAssetRegistry() const
-{
-    return AssetRegistry->PathNameToAssetInfo;
 }
 
 void UAssetManager::RegisterFactory(UAssetFactory* InFactory)
@@ -149,6 +145,56 @@ void UAssetManager::UnregisterFactory(UAssetFactory* InFactory)
 //     return Asset;
 // }
 
+UAsset* UAssetManager::Load(UClass* ClassType, const FString& Path)
+{
+    namespace fs = std::filesystem;
+    fs::path     fsPath(Path.ToWideString());
+    FString      Name = fsPath.stem().string();
+
+    // 1) 캐시 조회
+    {
+        std::lock_guard<std::mutex> lock(Mutex);
+        if (UAsset** Cached = LoadedAssets.Find(Name))
+        {
+            return *Cached;
+        }
+    }
+
+    // 2) 파일 존재 및 크기 확인
+    if (!fs::exists(fsPath) || fs::file_size(fsPath) < sizeof(uint32))
+        return nullptr;
+
+    UAsset* Asset = nullptr;
+    const auto ext = fsPath.extension().string();
+
+    // 3) .ttalkak → Serializer 로드
+    if (ext == ".ttalkak")
+    {
+        UObject* Raw = Serializer::LoadFromFile(fsPath);
+        Asset = Cast<UAsset>(Raw);
+    }
+    // 4) 그 외 포맷 → 팩토리 임포트
+    else
+    {
+        for (UAssetFactory* F : Factories)
+        {
+            if (F->CanImport(Path))
+            {
+                Asset = F->ImportFromFile(Path);
+                break;
+            }
+        }
+    }
+
+    // 5) 캐시에 저장
+    if (Asset)
+    {
+        std::lock_guard<std::mutex> lock(Mutex);
+        LoadedAssets.Add(Name, Asset);
+    }
+    return Asset;
+}
+
 void UAssetManager::Store(const FName& InName, UAsset* InAsset)
 {
     if (InAsset)
@@ -169,6 +215,23 @@ void UAssetManager::Store(const FName& InName, UAsset* InAsset)
 //     return Load(desc.RelativePath);
 // }
 
+UAsset* UAssetManager::Get(UClass* ClassType, const FString& InName)
+{
+    // 1) Registry에서 Descriptor만 꺼내고
+    FAssetDescriptor desc;
+    if (!Registry || !Registry->GetDescriptor(InName, desc))
+        return nullptr;
+
+    // 2) Load 에 모든 캐시 검사+로드 로직 위임
+    UAsset* Asset = Load(ClassType, desc.AbsolutePath);
+    if (Asset)
+    {
+        Asset->GetDescriptor() = desc;
+    }
+    
+    return Asset;
+}
+
 void UAssetManager::Unload(const FString& InName)
 {
     std::lock_guard<std::mutex> lock(Mutex);
@@ -177,6 +240,7 @@ void UAssetManager::Unload(const FString& InName)
 
 bool UAssetManager::SaveAsset(UObject* Root, const FString& Path)
 {
+    UAsset* ToSaveAsset = Cast<UAsset>(Root);
     // 1) 상위 디렉토리 확인 및 생성
     const std::filesystem::path fsPath(Path.ToWideString());
     const std::filesystem::path dir = fsPath.parent_path();
@@ -206,6 +270,21 @@ UObject* UAssetManager::LoadAsset(const FString& Path, UClass* ClassType)
     }
 
     return nullptr;
+}
+
+TArray<FAssetDescriptor> UAssetManager::GetDescriptorsByType(UClass* InClass)
+{
+    if (InClass == UTexture::StaticClass())
+    {
+        TArray<FAssetDescriptor> Result = Registry->GetDescriptorsByExtension(TEXT(".png"));
+        Result.Append(Registry->GetDescriptorsByExtension(TEXT(".dds")));
+        Result.Append(Registry->GetDescriptorsByExtension(TEXT(".tga")));
+        Result.Append(Registry->GetDescriptorsByExtension(TEXT(".jpg")));
+        Result.Append(Registry->GetDescriptorsByExtension(TEXT(".jpeg")));
+        return Result;
+    }
+
+    return TArray<FAssetDescriptor>();
 }
 
 void UAssetManager::LoadObjFiles()

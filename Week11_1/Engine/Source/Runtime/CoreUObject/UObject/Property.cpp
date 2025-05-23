@@ -1,6 +1,7 @@
 #include "Property.h"
 #include "Class.h"
 #include "ScriptStruct.h"
+#include "Engine/Asset/Asset.h"
 #include "Serialization/Archive2.h"
 #include "UserInterface/Console.h"
 
@@ -32,9 +33,18 @@ void FUnresolvedPtrProperty::Resolve()
             // ClassMap에서 먼저 검사
             if (UClass* FoundClass = UClass::FindClass(TypeName))
             {
-                Type = EPropertyType::Object;
-                TypeSpecificData = FoundClass;
-                ResolvedProperty = new FObjectProperty{ OwnerStruct, Name, Size, Offset, Flags };
+                if (FoundClass->IsChildOf(UAsset::StaticClass()))
+                {
+                    Type = EPropertyType::Asset;
+                    TypeSpecificData = FoundClass;
+                    ResolvedProperty = new FAssetProperty{ OwnerStruct, Name, Size, Offset, Flags };
+                }
+                else
+                {
+                    Type = EPropertyType::Object;
+                    TypeSpecificData = FoundClass;
+                    ResolvedProperty = new FObjectProperty{ OwnerStruct, Name, Size, Offset, Flags };
+                }
                 return;
             }
 
