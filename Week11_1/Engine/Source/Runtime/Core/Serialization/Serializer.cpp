@@ -7,24 +7,21 @@
 
 namespace Serializer
 {
-    // 로드 중 생성된 객체를 캐시 (ID → 인스턴스)
-    static TMap<int32, UObject*> LoadedObjectMap;
-    // 저장 중 할당된 ID를 추적 (원본 포인터 → ID)
-    static TMap<const UObject*, int32> SavedObjectIDMap;
+    // 객체를 캐시 (ID → 인스턴스)
+    static TMap<int32, UObject*> ObjectCache;
 }
 
 void Serializer::Save(FArchive2& Ar, const UObject* Obj)
 {
     uint32 ObjUUID = Obj->GetUUID();
-    SavedObjectIDMap.Add(Obj, ObjUUID);
-    // 2) ID 저장
-    Ar.SerializeRaw(&ObjUUID, sizeof(Obj->GetUUID()));
-    
-    // 3) 최초 저장인 경우에만 클래스명+데이터 시리얼라이즈
-    bool bFirstTime = (ObjUUID == SavedObjectIDMap[Obj]);
+    Ar.SerializeRaw(&ObjUUID, sizeof(ObjUUID));
+
+    bool bFirstTime = !ObjectCache.Contains(ObjUUID);
     Ar.SerializeRaw(&bFirstTime, sizeof(bFirstTime));
+    
     if (bFirstTime)
     {
+        ObjectCache.Add(ObjUUID, const_cast<UObject*>(Obj));
         // 3-1) 클래스명 저장
         FString CName = Obj->GetClass()->GetName();
         int32 Len = CName.Len();
@@ -47,7 +44,7 @@ UObject* Serializer::Load(FArchive2& Ar)
 
     if (!bFirstTime)
     {
-        return LoadedObjectMap[ObjUUID];
+        return ObjectCache[ObjUUID];
     }
     
     // 1) 이름 길이 읽기
@@ -67,7 +64,7 @@ UObject* Serializer::Load(FArchive2& Ar)
     
     UObject* Obj = FObjectFactory::ConstructObject(C, nullptr);
     // 4) 캐시에 저장
-    LoadedObjectMap.Add(ObjUUID, Obj);
+    ObjectCache.Add(ObjUUID, Obj);
     // 5) 실제 데이터 역직렬화
     Obj->Serialize(Ar);
     return Obj;
